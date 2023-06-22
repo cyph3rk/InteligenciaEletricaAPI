@@ -37,7 +37,14 @@ class PessoaTests {
         ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, requestEntity, String.class);
 
         Assert.assertEquals(HttpStatus.CREATED, response.getStatusCode());
-        Assert.assertTrue(response.getBody().contains(requestBody));
+
+        String resp = "{\"id\":\"1\"," +
+                "\"nome\":\"Diego Vargas\"," +
+                "\"dataNascimento\":\"02/09/1977\"," +
+                "\"sexo\":\"Masculino\"," +
+                "\"parentesco\":\"Filho\"}";
+
+        Assert.assertTrue(response.getBody().contains(resp));
     }
 
     @Test

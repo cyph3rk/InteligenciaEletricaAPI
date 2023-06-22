@@ -36,7 +36,13 @@ class EquipamentoTests {
         ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, requestEntity, String.class);
 
         Assert.assertEquals(HttpStatus.CREATED, response.getStatusCode());
-        Assert.assertTrue(response.getBody().contains(requestBody));
+
+        String resp = "{\"id\":\"1\"," +
+                "\"nome\":\"Ferro Passar Roupa\"," +
+                "\"modelo\":\"Antigo\"," +
+                "\"potencia\":\"50W\"}";
+
+        Assert.assertTrue(response.getBody().contains(resp));
     }
 
     @Test

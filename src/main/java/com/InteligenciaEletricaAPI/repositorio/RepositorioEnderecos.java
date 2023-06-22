@@ -10,13 +10,22 @@ import java.util.Set;
 @Repository
 public class RepositorioEnderecos {
 
+    private static int count;
+
     private Set<Endereco> enderecos;
 
     public RepositorioEnderecos() {
+        count = 0;
         enderecos = new HashSet<>();
     }
 
+    private int getId() {
+        count++;
+        return count;
+    }
+
     public void salvar(Endereco endereco) {
+        endereco.setId(Integer.toString(getId()));
         enderecos.add(endereco);
     }
 

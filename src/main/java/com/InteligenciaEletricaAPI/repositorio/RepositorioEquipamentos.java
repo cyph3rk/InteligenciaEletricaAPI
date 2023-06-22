@@ -11,13 +11,22 @@ import java.util.Set;
 @Repository
 public class RepositorioEquipamentos {
 
+    private static int count;
+
     private Set<Equipamento> equipamentos;
 
     public RepositorioEquipamentos() {
+        count = 0;
         equipamentos = new HashSet<>();
     }
 
+    private int getId() {
+        count++;
+        return count;
+    }
+
     public void salvar(Equipamento equipamento) {
+        equipamento.setId(Integer.toString(getId()));
         equipamentos.add(equipamento);
     }
 
@@ -29,5 +38,9 @@ public class RepositorioEquipamentos {
 
     public void remove(Equipamento equipamento) {
         equipamentos.remove(equipamento);
+    }
+
+    public Object getAll() {
+        return equipamentos;
     }
 }

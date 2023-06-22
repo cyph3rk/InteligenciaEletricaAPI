@@ -39,7 +39,14 @@ class EnderecoTests {
 		ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, requestEntity, String.class);
 
 		Assert.assertEquals(HttpStatus.CREATED, response.getStatusCode());
-		Assert.assertTrue(response.getBody().contains(requestBody));
+
+		String resp = "{\"id\":\"1\"," +
+				"\"rua\":\"Sao Jose\"," +
+				"\"numero\":\"130\"," +
+				"\"bairro\":\"Bela Vista I\"," +
+				"\"cidade\":\"São José\"," +
+				"\"estado\":\"Santa Catarina\"}";
+		Assert.assertTrue(response.getBody().contains(resp));
 	}
 
 	@Test

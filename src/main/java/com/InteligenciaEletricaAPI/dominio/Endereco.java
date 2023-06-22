@@ -9,6 +9,9 @@ import lombok.Setter;
 public class Endereco {
 
     @JsonProperty
+    private String id;
+
+    @JsonProperty
     private String rua;
 
     @JsonProperty

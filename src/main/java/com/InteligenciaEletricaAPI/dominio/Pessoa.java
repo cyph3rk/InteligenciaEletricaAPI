@@ -1,8 +1,15 @@
 package com.InteligenciaEletricaAPI.dominio;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Getter;
+import lombok.Setter;
 
+@Setter
+@Getter
 public class Pessoa {
+
+    @JsonProperty
+    private String id;
 
     @JsonProperty
     private String nome;
