@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -48,14 +49,16 @@ public class EquipamentoController {
         }
 
         Equipamento equipamento = EquipamentoForm.toEquipamento();
-        repositorioEquipamentos.salvar(equipamento);
+        if (!repositorioEquipamentos.salvar(equipamento)) {
+            return ResponseEntity.badRequest().body("{\"Erro\": \"Equipamento JÁ cadastrado.\"}");
+        }
         return ResponseEntity.status(HttpStatus.CREATED).body(equipamento);
     }
 
     @GetMapping
     public ResponseEntity<String> getAllEquipamentos() {
 
-        String json = "Erro";
+        String json = "Erro Inesperado";
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             json = objectMapper.writeValueAsString(repositorioEquipamentos.getAll());
@@ -65,5 +68,46 @@ public class EquipamentoController {
 
         return ResponseEntity.ok(String.format(json));
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity getEquipamentoPorId(@PathVariable Integer id) {
+        Optional<Equipamento> equipamento = repositorioEquipamentos.buscarPorId(Integer.toString(id));
+
+        Boolean existeRegistro = equipamento.isPresent();
+        if (!existeRegistro) {
+            return ResponseEntity.badRequest().body("{\"Erro\": \"Equipamento NÃO cadastrado.\"}");
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(equipamento);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity deleteEquipamentoPorId(@PathVariable Integer id) {
+
+        Optional<Equipamento> equipamento = repositorioEquipamentos.buscarPorId(Integer.toString(id));
+
+        Boolean existeRegistro = equipamento.isPresent();
+        if (!existeRegistro) {
+            return ResponseEntity.badRequest().body("{\"Erro\": \"Equipamento NÃO cadastrado.\"}");
+        }
+
+        repositorioEquipamentos.remove(equipamento.get());
+        return ResponseEntity.ok("{\"Mensagem\": \"Equipamento DELETADO com sucesso.\"}");
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity alteraEquipamentoPorId(@PathVariable Integer id, @RequestBody Equipamento equipamentoNew) {
+
+        Optional<Equipamento> equipamentoOld = repositorioEquipamentos.buscarPorId(Integer.toString(id));
+
+        Boolean existeRegistro = equipamentoOld.isPresent();
+        if (!existeRegistro) {
+            return ResponseEntity.badRequest().body("{\"Erro\": \"Equipamento NÃO cadastrado.\"}");
+        }
+
+        repositorioEquipamentos.altera(equipamentoOld.get(), equipamentoNew);
+        return ResponseEntity.status(HttpStatus.OK).body(equipamentoNew);
+    }
+
 
 }

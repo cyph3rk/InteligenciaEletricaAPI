@@ -1,6 +1,5 @@
 package com.InteligenciaEletricaAPI.repositorio;
 
-import com.InteligenciaEletricaAPI.dominio.Endereco;
 import com.InteligenciaEletricaAPI.dominio.Equipamento;
 import org.springframework.stereotype.Repository;
 
@@ -25,9 +24,16 @@ public class RepositorioEquipamentos {
         return count;
     }
 
-    public void salvar(Equipamento equipamento) {
+    public boolean salvar(Equipamento equipamento) {
+
+        boolean encontrado = equipamentos.stream().anyMatch(nome -> nome.getNome().equals(equipamento.getNome()));
+        if (encontrado) {
+            return false;
+        }
+
         equipamento.setId(Integer.toString(getId()));
         equipamentos.add(equipamento);
+        return true;
     }
 
     public Optional<Equipamento> buscar(String nome, String modelo, String potencia) {
@@ -36,11 +42,29 @@ public class RepositorioEquipamentos {
                 .findFirst();
     }
 
-    public void remove(Equipamento equipamento) {
-        equipamentos.remove(equipamento);
+    public Optional<Equipamento> buscarPorId(String id) {
+        return equipamentos.stream()
+                .filter(endereco -> endereco.identificadaPorId(id))
+                .findFirst();
+    }
+
+    public Optional<Equipamento> buscarPorNome(String nome) {
+        return equipamentos.stream()
+                .filter(endereco -> endereco.identificadaPorNome(nome))
+                .findFirst();
     }
 
     public Object getAll() {
         return equipamentos;
+    }
+
+    public void remove(Equipamento equipamento) {
+        equipamentos.remove(equipamento);
+    }
+
+    public void altera(Equipamento equipamentoOld, Equipamento equipamentoNew) {
+        remove(equipamentoOld);
+        equipamentoNew.setId(equipamentoOld.getId());
+        equipamentos.add(equipamentoNew);
     }
 }

@@ -33,4 +33,13 @@ public class Equipamento {
                 && this.modelo.equals(modelo)
                 && this.potencia.equals(potencia);
     }
+
+    public boolean identificadaPorNome(String nome) {
+        return this.nome.equals(nome);
+    }
+
+    public boolean identificadaPorId(String id) {
+        return this.id.equals(id);
+    }
+
 }
