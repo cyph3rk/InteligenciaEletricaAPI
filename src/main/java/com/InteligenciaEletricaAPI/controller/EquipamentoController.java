@@ -8,6 +8,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Path;
 import jakarta.validation.Validator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +23,8 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/equipamento")
 public class EquipamentoController {
+
+    private static final Logger logger = LoggerFactory.getLogger(EquipamentoController.class);
 
     @Autowired
     private RepositorioEquipamentos repositorioEquipamentos;
@@ -37,6 +41,8 @@ public class EquipamentoController {
 
     @PostMapping
     public ResponseEntity<Object> cadastraEquipamento(@RequestBody EquipamentoForm equipamentoForm) {
+        logger.info("POST - Try : Cadastro de um novo Equipamento: Nome: " + equipamentoForm.getNome());
+
         Map<Path, String> violacoesToMap = validar(equipamentoForm);
 
         if (!violacoesToMap.isEmpty()) {
@@ -48,12 +54,15 @@ public class EquipamentoController {
         if ( resp == -1) {
             return ResponseEntity.badRequest().body("{\"Erro\": \"Equipamento JÁ cadastrado.\"}");
         }
+
+        logger.info("POST - Sucesso : Cadastro Equipamento: Nome: " + equipamentoForm.getNome() + "Id: " + resp);
         return ResponseEntity.status(HttpStatus.CREATED).body("{\"Messagem\": \"Equipamento CADASTRADO com sucesso.\", " +
                                                               "\"id\": \"" + resp +"\"}");
     }
 
     @GetMapping
     public ResponseEntity<String> getAllEquipamentos() {
+        logger.info("GET - Pedido de todos os Equipamentos cadastrados");
 
         String json = "Erro Inesperado";
         try {
@@ -68,6 +77,8 @@ public class EquipamentoController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Object> getEquipamentoPorId(@PathVariable Integer id) {
+        logger.info("GET - Pedido de Equipamento por Id: " + id);
+
         Optional<Equipamento> equipamento = repositorioEquipamentos.buscarPorId(Integer.toString(id));
 
         boolean existeRegistro = equipamento.isPresent();

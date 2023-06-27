@@ -8,6 +8,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Path;
 import jakarta.validation.Validator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +23,8 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/pessoa")
 public class PessoaController {
+
+    private static final Logger logger = LoggerFactory.getLogger(PessoaController.class);
 
     @Autowired
     private RepositorioPessoas repositorioPessoas;
@@ -36,7 +40,9 @@ public class PessoaController {
     }
 
     @PostMapping
-    public ResponseEntity cadastraPessoa(@RequestBody PessoaForm pessoaForm) {
+    public ResponseEntity<Object>  cadastraPessoa(@RequestBody PessoaForm pessoaForm) {
+        logger.info("POST - Try : Cadastro de uma nova Pessoa: Nome: " + pessoaForm.getNome());
+
         Map<Path, String> violacoesToMap = validar(pessoaForm);
 
         if (!violacoesToMap.isEmpty()) {
@@ -48,12 +54,15 @@ public class PessoaController {
         if ( resp == -1) {
             return ResponseEntity.badRequest().body("{\"Erro\": \"Pessoa JÁ cadastrado.\"}");
         }
+
+        logger.info("POST - Sucesso : Cadastro Pessoa: Nome: " + pessoaForm.getNome() + "Id: " + resp);
         return ResponseEntity.status(HttpStatus.CREATED).body("{\"Messagem\": \"Pessoa CADASTRADO com sucesso.\", " +
                                                               "\"id\": \"" + resp +"\"}");
     }
 
     @GetMapping
     public ResponseEntity<String> getAllPessoas() {
+        logger.info("GET - Pedido de todos as Pessoas cadastradas");
 
         String json = "Erro Inesperado";
         try {
@@ -68,6 +77,8 @@ public class PessoaController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Object> getPessoaPorId(@PathVariable Integer id) {
+        logger.info("GET - Pedido de Pessoa por Id: " + id);
+
         Optional<Pessoa> pessoa = repositorioPessoas.buscarPorId(Integer.toString(id));
 
         boolean existeRegistro = pessoa.isPresent();

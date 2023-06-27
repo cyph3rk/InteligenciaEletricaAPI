@@ -9,6 +9,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Path;
 import jakarta.validation.Validator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +24,8 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/endereco")
 public class EnderecoController {
+
+    private static final Logger logger = LoggerFactory.getLogger(EnderecoController.class);
 
     @Autowired
     private RepositorioEnderecos repositorioEnderecos;
@@ -37,7 +41,9 @@ public class EnderecoController {
     }
 
     @PostMapping
-    public ResponseEntity cadastraEndereco(@RequestBody EnderecoForm enderecoForm) {
+    public ResponseEntity<Object>  cadastraEndereco(@RequestBody EnderecoForm enderecoForm) {
+        logger.info("POST - Try : Cadastro de um novo Endereco: Rua: " + enderecoForm.getRua());
+
         Map<Path, String> violacoesToMap = validar(enderecoForm);
 
         if (!violacoesToMap.isEmpty()) {
@@ -49,12 +55,15 @@ public class EnderecoController {
         if ( resp == -1) {
             return ResponseEntity.badRequest().body("{\"Erro\": \"Endereco JÁ cadastrado.\"}");
         }
+
+        logger.info("POST - Sucesso : Cadastro Endereco: Rua: " + enderecoForm.getRua() + "Id: " + resp);
         return ResponseEntity.status(HttpStatus.CREATED).body("{\"Messagem\": \"Endereco CADASTRADO com sucesso.\", " +
                                                               "\"id\": \"" + resp +"\"}");
     }
 
     @GetMapping
     public ResponseEntity<String> getAllEnderecos() {
+        logger.info("GET - Pedido de todos os Enderecos cadastrados");
 
         String json = "Erro Inesperado";
         try {
@@ -69,6 +78,8 @@ public class EnderecoController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Object> getEnderecoPorId(@PathVariable Integer id) {
+        logger.info("GET - Pedido de Endereco por Id: " + id);
+
         Optional<Endereco> endereco = repositorioEnderecos.buscarPorId(Integer.toString(id));
 
         boolean existeRegistro = endereco.isPresent();
