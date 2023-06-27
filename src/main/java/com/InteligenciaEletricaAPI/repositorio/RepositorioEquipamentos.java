@@ -12,7 +12,7 @@ public class RepositorioEquipamentos {
 
     private static int count;
 
-    private Set<Equipamento> equipamentos;
+    private final Set<Equipamento> equipamentos;
 
     public RepositorioEquipamentos() {
         count = 0;
@@ -24,33 +24,26 @@ public class RepositorioEquipamentos {
         return count;
     }
 
-    public boolean salvar(Equipamento equipamento) {
-
-        boolean encontrado = equipamentos.stream().anyMatch(nome -> nome.getNome().equals(equipamento.getNome()));
+    public Integer salvar(Equipamento equipamento) {
+        boolean encontrado = equipamentos.stream().anyMatch(equip -> equip.getNome().equals(equipamento.getNome()));
         if (encontrado) {
-            return false;
+            return -1;
         }
 
         equipamento.setId(Integer.toString(getId()));
         equipamentos.add(equipamento);
-        return true;
-    }
-
-    public Optional<Equipamento> buscar(String nome, String modelo, String potencia) {
-        return equipamentos.stream()
-                .filter(endereco -> endereco.identificadaPor(nome, modelo, potencia))
-                .findFirst();
+        return Integer.parseInt(equipamento.getId());
     }
 
     public Optional<Equipamento> buscarPorId(String id) {
         return equipamentos.stream()
-                .filter(endereco -> endereco.identificadaPorId(id))
+                .filter(equipamento -> equipamento.identificadaPorId(id))
                 .findFirst();
     }
 
     public Optional<Equipamento> buscarPorNome(String nome) {
         return equipamentos.stream()
-                .filter(endereco -> endereco.identificadaPorNome(nome))
+                .filter(equipamento -> equipamento.identificadaPorNome(nome))
                 .findFirst();
     }
 
@@ -62,6 +55,7 @@ public class RepositorioEquipamentos {
         equipamentos.remove(equipamento);
     }
 
+    //TODO: Resolver o problema de alterar o nome para um que ja existe quebrando a regra de duplicidade
     public void altera(Equipamento equipamentoOld, Equipamento equipamentoNew) {
         remove(equipamentoOld);
         equipamentoNew.setId(equipamentoOld.getId());

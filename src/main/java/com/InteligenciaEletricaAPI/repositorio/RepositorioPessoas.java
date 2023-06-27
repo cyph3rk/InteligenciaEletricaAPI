@@ -24,19 +24,41 @@ public class RepositorioPessoas {
         return count;
     }
 
-    public void salvar(Pessoa pessoa) {
+    public Integer salvar(Pessoa pessoa) {
+        boolean encontrado = pessoas.stream().anyMatch(pes -> pes.getNome().equals(pessoa.getNome()));
+        if (encontrado) {
+            return -1;
+        }
+
         pessoa.setId(Integer.toString(getId()));
         pessoas.add(pessoa);
+        return Integer.parseInt(pessoa.getId());
     }
 
-    public Optional<Pessoa> buscar(String nome, String dataNascimento, String sexo, String parentesco) {
+    public Optional<Pessoa> buscarPorId(String id) {
         return pessoas.stream()
-                .filter(pessoa -> pessoa.identificadaPor(nome, dataNascimento, sexo, parentesco))
+                .filter(pessoa -> pessoa.identificadaPorId(id))
                 .findFirst();
+    }
+
+    public Optional<Pessoa> buscarPorNome(String nome) {
+        return pessoas.stream()
+                .filter(pessoa -> pessoa.identificadaPorNome(nome))
+                .findFirst();
+    }
+
+    public Object getAll() {
+        return pessoas;
     }
 
     public void remove(Pessoa pessoa) {
         pessoas.remove(pessoa);
     }
 
+    //TODO: Resolver o problema de alterar o nome para um que ja existe quebrando a regra de duplicidade
+    public void altera(Pessoa pessoaOld, Pessoa pessoaNew) {
+        remove(pessoaOld);
+        pessoaNew.setId(pessoaOld.getId());
+        pessoas.add(pessoaNew);
+    }
 }

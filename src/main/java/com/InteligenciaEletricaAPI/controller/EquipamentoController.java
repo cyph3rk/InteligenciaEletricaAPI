@@ -1,9 +1,7 @@
 package com.InteligenciaEletricaAPI.controller;
 
 import com.InteligenciaEletricaAPI.controller.form.EquipamentoForm;
-import com.InteligenciaEletricaAPI.dominio.Endereco;
 import com.InteligenciaEletricaAPI.dominio.Equipamento;
-import com.InteligenciaEletricaAPI.dominio.Pessoa;
 import com.InteligenciaEletricaAPI.repositorio.RepositorioEquipamentos;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -15,7 +13,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -34,25 +31,25 @@ public class EquipamentoController {
     private <T> Map<Path, String> validar(T form) {
         Set<ConstraintViolation<T>> violacoes = validator.validate(form);
 
-        Map<Path, String> violacoesToMap = violacoes.stream().collect(Collectors.toMap(
-                violacao -> violacao.getPropertyPath(), violacao -> violacao.getMessage()));
-
-        return violacoesToMap;
+        return violacoes.stream().collect(Collectors.toMap(
+                        ConstraintViolation::getPropertyPath, ConstraintViolation::getMessage));
     }
 
     @PostMapping
-    public ResponseEntity cadastraEquipamento(@RequestBody EquipamentoForm EquipamentoForm) {
-        Map<Path, String> violacoesToMap = validar(EquipamentoForm);
+    public ResponseEntity<Object> cadastraEquipamento(@RequestBody EquipamentoForm equipamentoForm) {
+        Map<Path, String> violacoesToMap = validar(equipamentoForm);
 
         if (!violacoesToMap.isEmpty()) {
             return ResponseEntity.badRequest().body(violacoesToMap);
         }
 
-        Equipamento equipamento = EquipamentoForm.toEquipamento();
-        if (!repositorioEquipamentos.salvar(equipamento)) {
+        Equipamento equipamento = equipamentoForm.toEquipamento();
+        Integer resp = repositorioEquipamentos.salvar(equipamento);
+        if ( resp == -1) {
             return ResponseEntity.badRequest().body("{\"Erro\": \"Equipamento JÁ cadastrado.\"}");
         }
-        return ResponseEntity.status(HttpStatus.CREATED).body(equipamento);
+        return ResponseEntity.status(HttpStatus.CREATED).body("{\"Messagem\": \"Equipamento CADASTRADO com sucesso.\", " +
+                                                              "\"id\": \"" + resp +"\"}");
     }
 
     @GetMapping
@@ -70,10 +67,22 @@ public class EquipamentoController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity getEquipamentoPorId(@PathVariable Integer id) {
+    public ResponseEntity<Object> getEquipamentoPorId(@PathVariable Integer id) {
         Optional<Equipamento> equipamento = repositorioEquipamentos.buscarPorId(Integer.toString(id));
 
-        Boolean existeRegistro = equipamento.isPresent();
+        boolean existeRegistro = equipamento.isPresent();
+        if (!existeRegistro) {
+            return ResponseEntity.badRequest().body("{\"Erro\": \"Equipamento NÃO cadastrado.\"}");
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(equipamento);
+    }
+
+    @GetMapping("/nome/{nome}")
+    public ResponseEntity<Object> getEquipamentoPorNomed(@PathVariable String nome) {
+        Optional<Equipamento> equipamento = repositorioEquipamentos.buscarPorNome(nome);
+
+        boolean existeRegistro = equipamento.isPresent();
         if (!existeRegistro) {
             return ResponseEntity.badRequest().body("{\"Erro\": \"Equipamento NÃO cadastrado.\"}");
         }
@@ -82,11 +91,11 @@ public class EquipamentoController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity deleteEquipamentoPorId(@PathVariable Integer id) {
+    public ResponseEntity<Object> deleteEquipamentoPorId(@PathVariable Integer id) {
 
         Optional<Equipamento> equipamento = repositorioEquipamentos.buscarPorId(Integer.toString(id));
 
-        Boolean existeRegistro = equipamento.isPresent();
+        boolean existeRegistro = equipamento.isPresent();
         if (!existeRegistro) {
             return ResponseEntity.badRequest().body("{\"Erro\": \"Equipamento NÃO cadastrado.\"}");
         }
@@ -96,11 +105,17 @@ public class EquipamentoController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity alteraEquipamentoPorId(@PathVariable Integer id, @RequestBody Equipamento equipamentoNew) {
+    public ResponseEntity<Object> alteraEquipamentoPorId(@PathVariable Integer id, @RequestBody EquipamentoForm equipamentoForm) {
+        Map<Path, String> violacoesToMap = validar(equipamentoForm);
+
+        if (!violacoesToMap.isEmpty()) {
+            return ResponseEntity.badRequest().body(violacoesToMap);
+        }
+
+        Equipamento equipamentoNew = equipamentoForm.toEquipamento();
 
         Optional<Equipamento> equipamentoOld = repositorioEquipamentos.buscarPorId(Integer.toString(id));
-
-        Boolean existeRegistro = equipamentoOld.isPresent();
+        boolean existeRegistro = equipamentoOld.isPresent();
         if (!existeRegistro) {
             return ResponseEntity.badRequest().body("{\"Erro\": \"Equipamento NÃO cadastrado.\"}");
         }

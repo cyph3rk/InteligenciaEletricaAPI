@@ -41,4 +41,12 @@ public class Endereco {
                 && this.cidade.equals(cidade)
                 && this.estado.equals(estado);
     }
+
+    public boolean identificadaPorRua(String rua) {
+        return this.rua.equals(rua);
+    }
+
+    public boolean identificadaPorId(String id) {
+        return this.id.equals(id);
+    }
 }

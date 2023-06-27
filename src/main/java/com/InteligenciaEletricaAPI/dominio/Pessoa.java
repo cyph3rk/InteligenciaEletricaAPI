@@ -36,4 +36,12 @@ public class Pessoa {
                 && this.sexo.equals(sexo)
                 && this.parentesco.equals(parentesco);
     }
+
+    public boolean identificadaPorNome(String nome) {
+        return this.nome.equals(nome);
+    }
+
+    public boolean identificadaPorId(String id) {
+        return this.id.equals(id);
+    }
 }
