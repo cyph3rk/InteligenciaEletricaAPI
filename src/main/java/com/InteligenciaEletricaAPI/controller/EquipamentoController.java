@@ -26,11 +26,16 @@ public class EquipamentoController {
 
     private static final Logger logger = LoggerFactory.getLogger(EquipamentoController.class);
 
-    @Autowired
-    private RepositorioEquipamentos repositorioEquipamentos;
+    private final RepositorioEquipamentos repositorioEquipamentos;
+
+    private final Validator validator;
 
     @Autowired
-    private Validator validator;
+    public EquipamentoController(RepositorioEquipamentos repositorioEquipamentos, Validator validator) {
+        this.repositorioEquipamentos = repositorioEquipamentos;
+        this.validator = validator;
+    }
+
 
     private <T> Map<Path, String> validar(T form) {
         Set<ConstraintViolation<T>> violacoes = validator.validate(form);

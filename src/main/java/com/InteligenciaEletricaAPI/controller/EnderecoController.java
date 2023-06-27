@@ -27,11 +27,15 @@ public class EnderecoController {
 
     private static final Logger logger = LoggerFactory.getLogger(EnderecoController.class);
 
-    @Autowired
-    private RepositorioEnderecos repositorioEnderecos;
+    private final RepositorioEnderecos repositorioEnderecos;
+
+    private final Validator validator;
 
     @Autowired
-    private Validator validator;
+    public EnderecoController(RepositorioEnderecos repositorioEnderecos, Validator validator) {
+        this.repositorioEnderecos = repositorioEnderecos;
+        this.validator = validator;
+    }
 
     private <T> Map<Path, String> validar(T form) {
         Set<ConstraintViolation<T>> violacoes = validator.validate(form);

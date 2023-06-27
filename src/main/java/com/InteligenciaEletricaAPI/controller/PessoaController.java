@@ -26,11 +26,15 @@ public class PessoaController {
 
     private static final Logger logger = LoggerFactory.getLogger(PessoaController.class);
 
-    @Autowired
-    private RepositorioPessoas repositorioPessoas;
+    private final RepositorioPessoas repositorioPessoas;
+
+    private final Validator validator;
 
     @Autowired
-    private Validator validator;
+    public PessoaController(RepositorioPessoas repositorioPessoas, Validator validator) {
+        this.repositorioPessoas = repositorioPessoas;
+        this.validator = validator;
+    }
 
     private <T> Map<Path, String> validar(T form) {
         Set<ConstraintViolation<T>> violacoes = validator.validate(form);

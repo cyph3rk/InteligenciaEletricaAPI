@@ -26,12 +26,6 @@ public class Equipamento {
         this.potencia = potencia;
     }
 
-    public boolean identificadaPor(String nome, String modelo, String potencia) {
-        return this.nome.equals(nome)
-                && this.modelo.equals(modelo)
-                && this.potencia.equals(potencia);
-    }
-
     public boolean identificadaPorNome(String nome) {
         return this.nome.equals(nome);
     }

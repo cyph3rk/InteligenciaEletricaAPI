@@ -34,14 +34,6 @@ public class Endereco {
         this.estado = estado;
     }
 
-    public boolean identificadaPor(String rua, String numero, String bairro, String cidade, String estado) {
-        return this.rua.equals(rua)
-                && this.numero.equals(numero)
-                && this.bairro.equals(bairro)
-                && this.cidade.equals(cidade)
-                && this.estado.equals(estado);
-    }
-
     public boolean identificadaPorRua(String rua) {
         return this.rua.equals(rua);
     }

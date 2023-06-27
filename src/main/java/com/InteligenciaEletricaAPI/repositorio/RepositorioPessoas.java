@@ -12,7 +12,7 @@ public class RepositorioPessoas {
 
     private static int count;
 
-    private Set<Pessoa> pessoas;
+    private final Set<Pessoa> pessoas;
 
     public RepositorioPessoas() {
         count = 0;

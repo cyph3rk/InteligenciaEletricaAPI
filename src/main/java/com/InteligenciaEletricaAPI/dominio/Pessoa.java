@@ -30,13 +30,6 @@ public class Pessoa {
         this.parentesco = parentesco;
     }
 
-    public boolean identificadaPor(String nome, String dataNascimento, String sexo, String parentesco) {
-        return this.nome.equals(nome)
-                && this.dataNascimento.equals(dataNascimento)
-                && this.sexo.equals(sexo)
-                && this.parentesco.equals(parentesco);
-    }
-
     public boolean identificadaPorNome(String nome) {
         return this.nome.equals(nome);
     }
