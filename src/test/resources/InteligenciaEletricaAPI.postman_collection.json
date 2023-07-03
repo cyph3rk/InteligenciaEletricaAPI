@@ -1,0 +1,427 @@
+{
+	"info": {
+		"_postman_id": "d3252981-b939-46b0-ae7d-ee95703ffe49",
+		"name": "Teste Inteligencia Eletrica API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "18077328"
+	},
+	"item": [
+		{
+			"name": "Endereco",
+			"item": [
+				{
+					"name": "Endereco Cadastro",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\"rua\": \"Rua Sao Jose, 130 3\",\n\"numero\": \"200\",\n\"bairro\": \"Boa Vista\",\n\"cidade\": \"Jalapeno\",\n\"estado\": \"Santa Catarina\"\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/endereco",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"endereco"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Endereco Pega Todos",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/endereco",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"endereco"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Endereco Pega Por Id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/endereco/1",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"endereco",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Endereco Pega Por Nome",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/endereco/rua/Rua Altera Sucesso",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"endereco",
+								"rua",
+								"Rua Altera Sucesso"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Endereço Altera Por id",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"rua\": \"Rua Altera Sucesso\",\n    \"numero\": \"130\",\n    \"bairro\": \"Bela Vista I\",\n    \"cidade\": \"São José\",\n    \"estado\": \"Santa Catarina\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/endereco/1",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"endereco",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Endereco Deleta por id",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/equipamento/3",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"equipamento",
+								"3"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Equipamento",
+			"item": [
+				{
+					"name": "Equipamento Cadastro",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"nome\": \"Ferro Passar 3\",\n    \"modelo\": \"Antigo\",\n    \"potencia\": \"50W\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/equipamento",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"equipamento"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Equipamentos Pega Todos",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/equipamento",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"equipamento"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Equipamento Pega Por Id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/equipamento/1",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"equipamento",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Equipamento Pega Por Nome",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/equipamento/nome/Ferro passar Roupa 6",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"equipamento",
+								"nome",
+								"Ferro passar Roupa 6"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Equipamento Altera Por Id",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"nome\": \"Ferro passar Roupa novo\",\n    \"modelo\": \"Andtigo\",\n    \"potencia\": \"50w\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/equipamento/1",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"equipamento",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Equipamento Deleta Por Id",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/equipamento/1",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"equipamento",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Pessoa",
+			"item": [
+				{
+					"name": "Pessoa Cadastro",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"nome\": \"Nome do segundo\",\n    \"dataNascimento\": \"01/01/2000\",\n    \"sexo\": \"masculino\", \n    \"parentesco\": \"Filho\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/pessoa",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"pessoa"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Pessoa Pega Todos",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/pessoa",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"pessoa"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Pessoa Pega Por Id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/pessoa/1",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"pessoa",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Pessoa Pega Por Nome",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/pessoa/nome/Nova Pessoa",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"pessoa",
+								"nome",
+								"Nova Pessoa"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Pessoa Altera Por Id",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"nome\": \"\",\n    \"dataNascimento\": \"01/01/2000\",\n    \"sexo\": \"masculino\", \n    \"parentesco\": \"Filho\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/pessoa/3",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"pessoa",
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Pessoa Deleta Por Id",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/pessoa/1",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"pessoa",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
