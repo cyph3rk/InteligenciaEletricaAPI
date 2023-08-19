@@ -2,6 +2,8 @@ package com.InteligenciaEletricaAPI.controller;
 
 import com.InteligenciaEletricaAPI.controller.form.PessoaForm;
 import com.InteligenciaEletricaAPI.dominio.Pessoa;
+import com.InteligenciaEletricaAPI.dto.PessoaDTO;
+import com.InteligenciaEletricaAPI.facade.PessoaFacade;
 import com.InteligenciaEletricaAPI.repositorio.RepositorioPessoas;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -15,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -29,6 +32,9 @@ public class PessoaController {
     private final RepositorioPessoas repositorioPessoas;
 
     private final Validator validator;
+
+    @Autowired
+    private PessoaFacade pessoaFacade;
 
     @Autowired
     public PessoaController(RepositorioPessoas repositorioPessoas, Validator validator) {
@@ -53,8 +59,9 @@ public class PessoaController {
             return ResponseEntity.badRequest().body(violacoesToMap);
         }
 
-        Pessoa pessoa = pessoaForm.toPessoa();
-        Integer resp = repositorioPessoas.salvar(pessoa);
+        PessoaDTO pessoaDTO = pessoaForm.toPessoaDTO();
+//        Integer resp = repositorioPessoas.salvar(pessoa);
+        Long resp = pessoaFacade.salvar(pessoaDTO);
         if ( resp == -1) {
             return ResponseEntity.badRequest().body("{\"Erro\": \"Pessoa JÁ cadastrado.\"}");
         }
@@ -71,7 +78,7 @@ public class PessoaController {
         String json = "Erro Inesperado";
         try {
             ObjectMapper objectMapper = new ObjectMapper();
-            json = objectMapper.writeValueAsString(repositorioPessoas.getAll());
+            json = objectMapper.writeValueAsString(pessoaFacade.getAll());
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
@@ -80,63 +87,63 @@ public class PessoaController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Object> getPessoaPorId(@PathVariable Integer id) {
+    public ResponseEntity<Object> getPessoaPorId(@PathVariable Long id) {
         logger.info("GET - Pedido de Pessoa por Id: " + id);
 
-        Optional<Pessoa> pessoa = repositorioPessoas.buscarPorId(Integer.toString(id));
+        Optional<PessoaDTO> pessoaDTO = pessoaFacade.buscarPorId(id);
 
-        boolean existeRegistro = pessoa.isPresent();
+        boolean existeRegistro = pessoaDTO.isPresent();
         if (!existeRegistro) {
             return ResponseEntity.badRequest().body("{\"Erro\": \"Pessoa NÃO cadastrado.\"}");
         }
 
-        return ResponseEntity.status(HttpStatus.OK).body(pessoa);
+        return ResponseEntity.status(HttpStatus.OK).body(pessoaDTO);
     }
 
     @GetMapping("/nome/{nome}")
     public ResponseEntity<Object> getPessoaPorNome(@PathVariable String nome) {
-        Optional<Pessoa> pessoa = repositorioPessoas.buscarPorNome(nome);
+        List<PessoaDTO> pessoaDTO = pessoaFacade.buscarPorNome(nome);
 
-        boolean existeRegistro = pessoa.isPresent();
-        if (!existeRegistro) {
+        if (pessoaDTO.size() <= 0) {
             return ResponseEntity.badRequest().body("{\"Erro\": \"Pessoa NÃO cadastrado.\"}");
         }
 
-        return ResponseEntity.status(HttpStatus.OK).body(pessoa);
+        return ResponseEntity.status(HttpStatus.OK).body(pessoaDTO);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Object> deletePessoaPorId(@PathVariable Integer id) {
+    public ResponseEntity<Object> deletePessoaPorId(@PathVariable Long id) {
 
-        Optional<Pessoa> pessoa = repositorioPessoas.buscarPorId(Integer.toString(id));
+        Optional<PessoaDTO> pessoaDTO = pessoaFacade.buscarPorId(id);
 
-        boolean existeRegistro = pessoa.isPresent();
+        boolean existeRegistro = pessoaDTO.isPresent();
         if (!existeRegistro) {
             return ResponseEntity.badRequest().body("{\"Erro\": \"Pessoa NÃO cadastrado.\"}");
         }
 
-        repositorioPessoas.remove(pessoa.get());
+        pessoaFacade.remove(pessoaDTO.get());
         return ResponseEntity.ok("{\"Mensagem\": \"Pessoa DELETADO com sucesso.\"}");
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Object> alteraPessoaPorId(@PathVariable Integer id, @RequestBody PessoaForm pessoaForm) {
+    public ResponseEntity<Object> alteraPessoaPorId(@PathVariable Long id, @RequestBody PessoaForm pessoaForm) {
         Map<Path, String> violacoesToMap = validar(pessoaForm);
 
         if (!violacoesToMap.isEmpty()) {
             return ResponseEntity.badRequest().body(violacoesToMap);
         }
 
-        Pessoa pessoaNew = pessoaForm.toPessoa();
+        Optional<PessoaDTO> pessoaDTO_old = pessoaFacade.buscarPorId(id);
 
-        Optional<Pessoa> pessoaOld = repositorioPessoas.buscarPorId(Integer.toString(id));
-        boolean existeRegistro = pessoaOld.isPresent();
+        boolean existeRegistro = pessoaDTO_old.isPresent();
         if (!existeRegistro) {
             return ResponseEntity.badRequest().body("{\"Erro\": \"Pessoa NÃO cadastrado.\"}");
         }
 
-        repositorioPessoas.altera(pessoaOld.get(), pessoaNew);
-        return ResponseEntity.status(HttpStatus.OK).body(pessoaNew);
+        PessoaDTO pessoaDTO_new = pessoaForm.toPessoaDTO();
+        pessoaDTO_new.setId(id);
+        pessoaFacade.altera(id, pessoaDTO_new);
+        return ResponseEntity.status(HttpStatus.OK).body(pessoaDTO_new);
     }
 
 }
