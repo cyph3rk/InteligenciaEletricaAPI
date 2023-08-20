@@ -25,7 +25,7 @@ public class PessoaFacade {
 
     public Long salvar(PessoaDTO pessoaDTO) {
         List<PessoaDTO> encontrado = buscarPorNome(pessoaDTO.getNome());
-        if (encontrado.size() > 1) {
+        if (encontrado.size() >= 1) {
             return -1L;
         }
 

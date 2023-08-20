@@ -20,7 +20,7 @@ public class EnderecoFacade {
 
     public Long salvar(EnderecoDTO enderecoDTO) {
         List<EnderecoDTO> encontrado = buscarPorRua(enderecoDTO.getRua());
-        if (encontrado.size() > 1) {
+        if (encontrado.size() >= 1) {
             return -1L;
         }
 
