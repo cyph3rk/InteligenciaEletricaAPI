@@ -51,6 +51,10 @@ public class PessoaController {
 
     @PostMapping
     public ResponseEntity<Object>  cadastraPessoa(@RequestBody PessoaForm pessoaForm) {
+
+        //Todo: Implementar regra de não existir mais de uma pessoa como cliente por
+        // Relacionamento em um ou mais endereços
+
         logger.info("POST - Try : Cadastro de uma nova Pessoa: Nome: " + pessoaForm.getNome());
 
         Map<Path, String> violacoesToMap = validar(pessoaForm);
@@ -60,7 +64,6 @@ public class PessoaController {
         }
 
         PessoaDTO pessoaDTO = pessoaForm.toPessoaDTO();
-//        Integer resp = repositorioPessoas.salvar(pessoa);
         Long resp = pessoaFacade.salvar(pessoaDTO);
         if ( resp == -1) {
             return ResponseEntity.badRequest().body("{\"Erro\": \"Pessoa JÁ cadastrado.\"}");

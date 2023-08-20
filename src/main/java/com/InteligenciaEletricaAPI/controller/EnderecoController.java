@@ -3,6 +3,10 @@ package com.InteligenciaEletricaAPI.controller;
 
 import com.InteligenciaEletricaAPI.controller.form.EnderecoForm;
 import com.InteligenciaEletricaAPI.dominio.Endereco;
+import com.InteligenciaEletricaAPI.dto.EnderecoDTO;
+import com.InteligenciaEletricaAPI.dto.PessoaDTO;
+import com.InteligenciaEletricaAPI.facade.EnderecoFacade;
+import com.InteligenciaEletricaAPI.facade.PessoaFacade;
 import com.InteligenciaEletricaAPI.repositorio.RepositorioEnderecos;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -32,6 +36,9 @@ public class EnderecoController {
     private final Validator validator;
 
     @Autowired
+    private EnderecoFacade enderecoFacade;
+
+    @Autowired
     public EnderecoController(RepositorioEnderecos repositorioEnderecos, Validator validator) {
         this.repositorioEnderecos = repositorioEnderecos;
         this.validator = validator;
@@ -44,9 +51,10 @@ public class EnderecoController {
                 ConstraintViolation::getPropertyPath, ConstraintViolation::getMessage));
     }
 
-    @PostMapping
-    public ResponseEntity<Object>  cadastraEndereco(@RequestBody EnderecoForm enderecoForm) {
+    @PostMapping("/{pessoa_id}")
+    public ResponseEntity<Object>  cadastraEndereco(@PathVariable Long pessoa_id, @RequestBody EnderecoForm enderecoForm) {
         logger.info("POST - Try : Cadastro de um novo Endereco: Rua: " + enderecoForm.getRua());
+        logger.info("POST - Try : Cadastro de um novo Endereco: Id: " + pessoa_id);
 
         Map<Path, String> violacoesToMap = validar(enderecoForm);
 
@@ -54,8 +62,8 @@ public class EnderecoController {
             return ResponseEntity.badRequest().body(violacoesToMap);
         }
 
-        Endereco endereco = enderecoForm.toEndereco();
-        Integer resp = repositorioEnderecos.salvar(endereco);
+        EnderecoDTO enderecoDTO = enderecoForm.toEnderecoDTO();
+        Long resp = enderecoFacade.salvar(enderecoDTO);
         if ( resp == -1) {
             return ResponseEntity.badRequest().body("{\"Erro\": \"Endereco JÁ cadastrado.\"}");
         }
@@ -65,81 +73,81 @@ public class EnderecoController {
                                                               "\"id\": \"" + resp +"\"}");
     }
 
-    @GetMapping
-    public ResponseEntity<String> getAllEnderecos() {
-        logger.info("GET - Pedido de todos os Enderecos cadastrados");
+//    @GetMapping
+//    public ResponseEntity<String> getAllEnderecos() {
+//        logger.info("GET - Pedido de todos os Enderecos cadastrados");
+//
+//        String json = "Erro Inesperado";
+//        try {
+//            ObjectMapper objectMapper = new ObjectMapper();
+//            json = objectMapper.writeValueAsString(repositorioEnderecos.getAll());
+//        } catch (JsonProcessingException e) {
+//            e.printStackTrace();
+//        }
+//
+//        return ResponseEntity.ok(String.format(json));
+//    }
 
-        String json = "Erro Inesperado";
-        try {
-            ObjectMapper objectMapper = new ObjectMapper();
-            json = objectMapper.writeValueAsString(repositorioEnderecos.getAll());
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
+//    @GetMapping("/{id}")
+//    public ResponseEntity<Object> getEnderecoPorId(@PathVariable Integer id) {
+//        logger.info("GET - Pedido de Endereco por Id: " + id);
+//
+//        Optional<Endereco> endereco = repositorioEnderecos.buscarPorId(Integer.toString(id));
+//
+//        boolean existeRegistro = endereco.isPresent();
+//        if (!existeRegistro) {
+//            return ResponseEntity.badRequest().body("{\"Erro\": \"Endereco NÃO cadastrado.\"}");
+//        }
+//
+//        return ResponseEntity.status(HttpStatus.OK).body(endereco);
+//    }
 
-        return ResponseEntity.ok(String.format(json));
-    }
+//    //TODO: Melhor A a questão de busca por RUA. Ter só uma rua é estranho
+//    @GetMapping("/rua/{rua}")
+//    public ResponseEntity<Object> getEnderecoPorRua(@PathVariable String rua) {
+//        Optional<Endereco> endereco = repositorioEnderecos.buscarPorRua(rua);
+//
+//        boolean existeRegistro = endereco.isPresent();
+//        if (!existeRegistro) {
+//            return ResponseEntity.badRequest().body("{\"Erro\": \"Endereco NÃO cadastrado.\"}");
+//        }
+//
+//        return ResponseEntity.status(HttpStatus.OK).body(endereco);
+//    }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Object> getEnderecoPorId(@PathVariable Integer id) {
-        logger.info("GET - Pedido de Endereco por Id: " + id);
+//    @DeleteMapping("/{id}")
+//    public ResponseEntity<Object> deleteEnderecoPorId(@PathVariable Integer id) {
+//
+//        Optional<Endereco> endereco = repositorioEnderecos.buscarPorId(Integer.toString(id));
+//
+//        boolean existeRegistro = endereco.isPresent();
+//        if (!existeRegistro) {
+//            return ResponseEntity.badRequest().body("{\"Erro\": \"Endereco NÃO cadastrado.\"}");
+//        }
+//
+//        repositorioEnderecos.remove(endereco.get());
+//        return ResponseEntity.ok("{\"Mensagem\": \"Endereco DELETADO com sucesso.\"}");
+//    }
 
-        Optional<Endereco> endereco = repositorioEnderecos.buscarPorId(Integer.toString(id));
-
-        boolean existeRegistro = endereco.isPresent();
-        if (!existeRegistro) {
-            return ResponseEntity.badRequest().body("{\"Erro\": \"Endereco NÃO cadastrado.\"}");
-        }
-
-        return ResponseEntity.status(HttpStatus.OK).body(endereco);
-    }
-
-    //TODO: Melhor A a questão de busca por RUA. Ter só uma rua é estranho
-    @GetMapping("/rua/{rua}")
-    public ResponseEntity<Object> getEnderecoPorRua(@PathVariable String rua) {
-        Optional<Endereco> endereco = repositorioEnderecos.buscarPorRua(rua);
-
-        boolean existeRegistro = endereco.isPresent();
-        if (!existeRegistro) {
-            return ResponseEntity.badRequest().body("{\"Erro\": \"Endereco NÃO cadastrado.\"}");
-        }
-
-        return ResponseEntity.status(HttpStatus.OK).body(endereco);
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Object> deleteEnderecoPorId(@PathVariable Integer id) {
-
-        Optional<Endereco> endereco = repositorioEnderecos.buscarPorId(Integer.toString(id));
-
-        boolean existeRegistro = endereco.isPresent();
-        if (!existeRegistro) {
-            return ResponseEntity.badRequest().body("{\"Erro\": \"Endereco NÃO cadastrado.\"}");
-        }
-
-        repositorioEnderecos.remove(endereco.get());
-        return ResponseEntity.ok("{\"Mensagem\": \"Endereco DELETADO com sucesso.\"}");
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<Object> alteraEnderecoPorId(@PathVariable Integer id, @RequestBody EnderecoForm enderecoForm) {
-        Map<Path, String> violacoesToMap = validar(enderecoForm);
-
-        if (!violacoesToMap.isEmpty()) {
-            return ResponseEntity.badRequest().body(violacoesToMap);
-        }
-
-        Endereco enderecoNew = enderecoForm.toEndereco();
-
-        Optional<Endereco> enderecoOld = repositorioEnderecos.buscarPorId(Integer.toString(id));
-        boolean existeRegistro = enderecoOld.isPresent();
-        if (!existeRegistro) {
-            return ResponseEntity.badRequest().body("{\"Erro\": \"Endereco NÃO cadastrado.\"}");
-        }
-
-        repositorioEnderecos.altera(enderecoOld.get(), enderecoNew);
-        return ResponseEntity.status(HttpStatus.OK).body(enderecoNew);
-    }
+//    @PutMapping("/{id}")
+//    public ResponseEntity<Object> alteraEnderecoPorId(@PathVariable Integer id, @RequestBody EnderecoForm enderecoForm) {
+//        Map<Path, String> violacoesToMap = validar(enderecoForm);
+//
+//        if (!violacoesToMap.isEmpty()) {
+//            return ResponseEntity.badRequest().body(violacoesToMap);
+//        }
+//
+//        Endereco enderecoNew = enderecoForm.toEndereco();
+//
+//        Optional<Endereco> enderecoOld = repositorioEnderecos.buscarPorId(Integer.toString(id));
+//        boolean existeRegistro = enderecoOld.isPresent();
+//        if (!existeRegistro) {
+//            return ResponseEntity.badRequest().body("{\"Erro\": \"Endereco NÃO cadastrado.\"}");
+//        }
+//
+//        repositorioEnderecos.altera(enderecoOld.get(), enderecoNew);
+//        return ResponseEntity.status(HttpStatus.OK).body(enderecoNew);
+//    }
 
 
 }

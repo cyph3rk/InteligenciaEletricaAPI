@@ -1,15 +1,21 @@
 package com.InteligenciaEletricaAPI.dominio;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
 @Setter
 @Getter
+@Entity
+@Table(name = "endereco")
 public class Endereco {
 
     @JsonProperty
-    private String id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(columnDefinition = "serial")
+    private Long id;
 
     @JsonProperty
     private String rua;
@@ -25,6 +31,10 @@ public class Endereco {
 
     @JsonProperty
     private String estado;
+
+    public Endereco() {
+
+    }
 
     public Endereco(String rua, String numero, String bairro, String cidade, String estado) {
         this.rua = rua;
