@@ -1,6 +1,5 @@
 package com.InteligenciaEletricaAPI.facade;
 
-import com.InteligenciaEletricaAPI.controller.PessoaController;
 import com.InteligenciaEletricaAPI.dominio.Pessoa;
 import com.InteligenciaEletricaAPI.dto.PessoaDTO;
 import com.InteligenciaEletricaAPI.repositorio.RepositorioPessoas;
@@ -20,8 +19,12 @@ public class PessoaFacade {
 
     private static final Logger logger = LoggerFactory.getLogger(PessoaFacade.class);
 
+    private RepositorioPessoas repositorioPessoas;
+
     @Autowired
-    private RepositorioPessoas repository;
+    public PessoaFacade(RepositorioPessoas repositorioPessoas) {
+        this.repositorioPessoas = repositorioPessoas;
+    }
 
     public Long salvar(PessoaDTO pessoaDTO) {
         List<PessoaDTO> encontrado = buscarPorNome(pessoaDTO.getNome());
@@ -36,14 +39,14 @@ public class PessoaFacade {
         pessoa.setCodigo_cliente(pessoaDTO.getCodigo_cliente());
         pessoa.setRelacionamento(pessoaDTO.getRelacionamento());
 
-        repository.save(pessoa);
+        repositorioPessoas.save(pessoa);
         pessoaDTO.setId(pessoa.getId());
 
         return pessoaDTO.getId();
     }
 
     public List<PessoaDTO> buscarPorNome(String nome) {
-        List<Pessoa> listaPessoas = repository.findByNome(nome);
+        List<Pessoa> listaPessoas = repositorioPessoas.findByNome(nome);
 
         return listaPessoas.stream()
                 .map(this::converter).collect(Collectors.toList());
@@ -52,7 +55,7 @@ public class PessoaFacade {
     public Optional<PessoaDTO> buscarPorId(Long id) {
 
         try {
-            Pessoa pessoa = repository.getReferenceById(id);
+            Pessoa pessoa = repositorioPessoas.getReferenceById(id);
 
             PessoaDTO pessoaDTO = new PessoaDTO();
             pessoaDTO.setId(pessoa.getId());
@@ -70,20 +73,20 @@ public class PessoaFacade {
     }
 
     public void remove(PessoaDTO pessoaDTO) {
-        repository.deleteById(pessoaDTO.getId());
+        repositorioPessoas.deleteById(pessoaDTO.getId());
 //        return "DELETED";
     }
 
     //TODO: Resolver o problema de alterar o nome para um que ja existe quebrando a regra de duplicidade
     public void altera(Long id, PessoaDTO pessoaDTO_New) {
-        Pessoa pessoaDB = repository.getReferenceById(id);
+        Pessoa pessoaDB = repositorioPessoas.getReferenceById(id);
         pessoaDB.setNome(pessoaDTO_New.getNome());
         pessoaDB.setData_nascimento(pessoaDTO_New.getData_nascimento());
         pessoaDB.setSexo(pessoaDTO_New.getSexo());
         pessoaDB.setCodigo_cliente(pessoaDTO_New.getCodigo_cliente());
         pessoaDB.setRelacionamento(pessoaDTO_New.getRelacionamento());
 
-        repository.save(pessoaDB);
+        repositorioPessoas.save(pessoaDB);
 //        return pessoaDTO_New;
     }
 
@@ -100,7 +103,7 @@ public class PessoaFacade {
     }
 
     public List<PessoaDTO> getAll() {
-        return repository
+        return repositorioPessoas
                 .findAll()
                 .stream()
                 .map(this::converter).collect(Collectors.toList());

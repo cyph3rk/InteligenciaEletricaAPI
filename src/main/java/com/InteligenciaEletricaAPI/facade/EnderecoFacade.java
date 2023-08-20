@@ -1,9 +1,7 @@
 package com.InteligenciaEletricaAPI.facade;
 
 import com.InteligenciaEletricaAPI.dominio.Endereco;
-import com.InteligenciaEletricaAPI.dominio.Pessoa;
 import com.InteligenciaEletricaAPI.dto.EnderecoDTO;
-import com.InteligenciaEletricaAPI.dto.PessoaDTO;
 import com.InteligenciaEletricaAPI.repositorio.RepositorioEnderecos;
 import com.InteligenciaEletricaAPI.repositorio.RepositorioPessoas;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,8 +13,12 @@ import java.util.stream.Collectors;
 @Service
 public class EnderecoFacade {
 
+    private RepositorioEnderecos repositorioEnderecos;
+
     @Autowired
-    private RepositorioEnderecos repository;
+    public EnderecoFacade(RepositorioEnderecos repositorioEnderecos) {
+        this.repositorioEnderecos = repositorioEnderecos;
+    }
 
     public Long salvar(EnderecoDTO enderecoDTO) {
         List<EnderecoDTO> encontrado = buscarPorRua(enderecoDTO.getRua());
@@ -31,7 +33,7 @@ public class EnderecoFacade {
         endereco.setCidade(enderecoDTO.getCidade());
         endereco.setEstado(enderecoDTO.getEstado());
 
-        repository.save(endereco);
+        repositorioEnderecos.save(endereco);
         enderecoDTO.setId(endereco.getId());
 
         return enderecoDTO.getId();
@@ -50,7 +52,7 @@ public class EnderecoFacade {
     }
 
     public List<EnderecoDTO> buscarPorRua(String rua) {
-        List<Endereco> listaEnderecos = repository.findByRua(rua);
+        List<Endereco> listaEnderecos = repositorioEnderecos.findByRua(rua);
 
         return listaEnderecos.stream()
                 .map(this::converter).collect(Collectors.toList());
