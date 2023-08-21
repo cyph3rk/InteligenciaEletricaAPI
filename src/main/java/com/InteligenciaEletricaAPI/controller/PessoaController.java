@@ -1,7 +1,6 @@
 package com.InteligenciaEletricaAPI.controller;
 
 import com.InteligenciaEletricaAPI.controller.form.PessoaForm;
-import com.InteligenciaEletricaAPI.dto.PessoaDTO;
 import com.InteligenciaEletricaAPI.facade.PessoaFacade;
 import com.InteligenciaEletricaAPI.repositorio.RepositorioPessoas;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -49,7 +48,7 @@ public class PessoaController {
     }
 
     @PostMapping
-    public ResponseEntity<Object>  cadastraPessoa(@RequestBody PessoaForm pessoaForm) {
+    public ResponseEntity<Object> cadastraPessoa(@RequestBody PessoaForm pessoaForm) {
 
         //Todo: Implementar regra de não existir mais de uma pessoa como cliente por
         // Relacionamento em um ou mais endereços
@@ -62,8 +61,7 @@ public class PessoaController {
             return ResponseEntity.badRequest().body(violacoesToMap);
         }
 
-        PessoaDTO pessoaDTO = pessoaForm.toPessoaDTO();
-        Long resp = pessoaFacade.salvar(pessoaDTO);
+        Long resp = pessoaFacade.salvar(pessoaForm);
         if ( resp == -1) {
             return ResponseEntity.badRequest().body("{\"Erro\": \"Pessoa JÁ cadastrado.\"}");
         }
@@ -92,38 +90,38 @@ public class PessoaController {
     public ResponseEntity<Object> getPessoaPorId(@PathVariable Long id) {
         logger.info("GET - Pedido de Pessoa por Id: " + id);
 
-        Optional<PessoaDTO> pessoaDTO = pessoaFacade.buscarPorId(id);
+        Optional<PessoaForm> pessoaForm = pessoaFacade.buscarPorId(id);
 
-        boolean existeRegistro = pessoaDTO.isPresent();
+        boolean existeRegistro = pessoaForm.isPresent();
         if (!existeRegistro) {
             return ResponseEntity.badRequest().body("{\"Erro\": \"Pessoa NÃO cadastrado.\"}");
         }
 
-        return ResponseEntity.status(HttpStatus.OK).body(pessoaDTO);
+        return ResponseEntity.status(HttpStatus.OK).body(pessoaForm);
     }
 
     @GetMapping("/nome/{nome}")
     public ResponseEntity<Object> getPessoaPorNome(@PathVariable String nome) {
-        List<PessoaDTO> pessoaDTO = pessoaFacade.buscarPorNome(nome);
+        List<PessoaForm> pessoaForms = pessoaFacade.buscarPorNome(nome);
 
-        if (pessoaDTO.size() <= 0) {
+        if (pessoaForms.size() <= 0) {
             return ResponseEntity.badRequest().body("{\"Erro\": \"Pessoa NÃO cadastrado.\"}");
         }
 
-        return ResponseEntity.status(HttpStatus.OK).body(pessoaDTO);
+        return ResponseEntity.status(HttpStatus.OK).body(pessoaForms);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deletePessoaPorId(@PathVariable Long id) {
 
-        Optional<PessoaDTO> pessoaDTO = pessoaFacade.buscarPorId(id);
+        Optional<PessoaForm> pessoaForm = pessoaFacade.buscarPorId(id);
 
-        boolean existeRegistro = pessoaDTO.isPresent();
+        boolean existeRegistro = pessoaForm.isPresent();
         if (!existeRegistro) {
             return ResponseEntity.badRequest().body("{\"Erro\": \"Pessoa NÃO cadastrado.\"}");
         }
 
-        pessoaFacade.remove(pessoaDTO.get());
+        pessoaFacade.remove(id);
         return ResponseEntity.ok("{\"Mensagem\": \"Pessoa DELETADO com sucesso.\"}");
     }
 
@@ -135,17 +133,15 @@ public class PessoaController {
             return ResponseEntity.badRequest().body(violacoesToMap);
         }
 
-        Optional<PessoaDTO> pessoaDTO_old = pessoaFacade.buscarPorId(id);
+        Optional<PessoaForm> pessoaForm_old = pessoaFacade.buscarPorId(id);
 
-        boolean existeRegistro = pessoaDTO_old.isPresent();
+        boolean existeRegistro = pessoaForm_old.isPresent();
         if (!existeRegistro) {
             return ResponseEntity.badRequest().body("{\"Erro\": \"Pessoa NÃO cadastrado.\"}");
         }
 
-        PessoaDTO pessoaDTO_new = pessoaForm.toPessoaDTO();
-        pessoaDTO_new.setId(id);
-        pessoaFacade.altera(id, pessoaDTO_new);
-        return ResponseEntity.status(HttpStatus.OK).body(pessoaDTO_new);
+        pessoaFacade.altera(id, pessoaForm);
+        return ResponseEntity.status(HttpStatus.OK).body(pessoaForm);
     }
 
 }

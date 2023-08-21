@@ -32,10 +32,11 @@ public class Pessoa {
     @JsonProperty
     private String relacionamento;
 
-    public Pessoa(String nome, String data_nascimento, String sexo, String relacionamento) {
+    public Pessoa(String nome, String data_nascimento, String sexo, String codigo_cliente, String relacionamento) {
         this.nome = nome;
         this.data_nascimento = data_nascimento;
         this.sexo = sexo;
+        this.codigo_cliente = codigo_cliente;
         this.relacionamento = relacionamento;
     }
 

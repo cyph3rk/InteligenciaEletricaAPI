@@ -1,7 +1,7 @@
 package com.InteligenciaEletricaAPI.facade;
 
+import com.InteligenciaEletricaAPI.controller.form.PessoaForm;
 import com.InteligenciaEletricaAPI.dominio.Pessoa;
-import com.InteligenciaEletricaAPI.dto.PessoaDTO;
 import com.InteligenciaEletricaAPI.repositorio.RepositorioPessoas;
 
 import jakarta.persistence.EntityNotFoundException;
@@ -26,73 +26,69 @@ public class PessoaFacade {
         this.repositorioPessoas = repositorioPessoas;
     }
 
-    public Long salvar(PessoaDTO pessoaDTO) {
-        List<PessoaDTO> encontrado = buscarPorNome(pessoaDTO.getNome());
+    public Long salvar(PessoaForm pessoaForm) {
+        List<PessoaForm> encontrado = buscarPorNome(pessoaForm.getNome());
         if (encontrado.size() >= 1) {
             return -1L;
         }
 
         Pessoa pessoa = new Pessoa();
-        pessoa.setNome(pessoaDTO.getNome());
-        pessoa.setData_nascimento(pessoaDTO.getData_nascimento());
-        pessoa.setSexo(pessoaDTO.getSexo());
-        pessoa.setCodigo_cliente(pessoaDTO.getCodigo_cliente());
-        pessoa.setRelacionamento(pessoaDTO.getRelacionamento());
+        pessoa.setNome(pessoaForm.getNome());
+        pessoa.setData_nascimento(pessoaForm.getData_nascimento());
+        pessoa.setSexo(pessoaForm.getSexo());
+        pessoa.setCodigo_cliente(pessoaForm.getCodigo_cliente());
+        pessoa.setRelacionamento(pessoaForm.getRelacionamento());
 
         repositorioPessoas.save(pessoa);
-        pessoaDTO.setId(pessoa.getId());
 
-        return pessoaDTO.getId();
+        return pessoa.getId();
     }
 
-    public List<PessoaDTO> buscarPorNome(String nome) {
+    public List<PessoaForm> buscarPorNome(String nome) {
         List<Pessoa> listaPessoas = repositorioPessoas.findByNome(nome);
 
         return listaPessoas.stream()
                 .map(this::converter).collect(Collectors.toList());
     }
 
-    public Optional<PessoaDTO> buscarPorId(Long id) {
+    public Optional<PessoaForm> buscarPorId(Long id) {
 
         try {
             Pessoa pessoa = repositorioPessoas.getReferenceById(id);
 
-            PessoaDTO pessoaDTO = new PessoaDTO();
-            pessoaDTO.setId(pessoa.getId());
-            pessoaDTO.setNome(pessoa.getNome());
-            pessoaDTO.setData_nascimento(pessoa.getData_nascimento());
-            pessoaDTO.setSexo(pessoa.getSexo());
-            pessoaDTO.setCodigo_cliente(pessoa.getCodigo_cliente());
-            pessoaDTO.setRelacionamento(pessoa.getRelacionamento());
+            PessoaForm pessoaForm = new PessoaForm();
+            pessoaForm.setNome(pessoa.getNome());
+            pessoaForm.setData_nascimento(pessoa.getData_nascimento());
+            pessoaForm.setSexo(pessoa.getSexo());
+            pessoaForm.setCodigo_cliente(pessoa.getCodigo_cliente());
+            pessoaForm.setRelacionamento(pessoa.getRelacionamento());
 
-            return Optional.of(pessoaDTO);
+            return Optional.of(pessoaForm);
         } catch (EntityNotFoundException ex) {
             logger.info("PessoaFacade - buscarPorId Id: " + id + (" Não cadastrado"));
             return Optional.empty();
         }
     }
 
-    public void remove(PessoaDTO pessoaDTO) {
-        repositorioPessoas.deleteById(pessoaDTO.getId());
+    public void remove(Long id) {
+        repositorioPessoas.deleteById(id);
 //        return "DELETED";
     }
 
     //TODO: Resolver o problema de alterar o nome para um que ja existe quebrando a regra de duplicidade
-    public void altera(Long id, PessoaDTO pessoaDTO_New) {
+    public void altera(Long id, PessoaForm pessoaForm_New) {
         Pessoa pessoaDB = repositorioPessoas.getReferenceById(id);
-        pessoaDB.setNome(pessoaDTO_New.getNome());
-        pessoaDB.setData_nascimento(pessoaDTO_New.getData_nascimento());
-        pessoaDB.setSexo(pessoaDTO_New.getSexo());
-        pessoaDB.setCodigo_cliente(pessoaDTO_New.getCodigo_cliente());
-        pessoaDB.setRelacionamento(pessoaDTO_New.getRelacionamento());
+        pessoaDB.setNome(pessoaForm_New.getNome());
+        pessoaDB.setData_nascimento(pessoaForm_New.getData_nascimento());
+        pessoaDB.setSexo(pessoaForm_New.getSexo());
+        pessoaDB.setCodigo_cliente(pessoaForm_New.getCodigo_cliente());
+        pessoaDB.setRelacionamento(pessoaForm_New.getRelacionamento());
 
         repositorioPessoas.save(pessoaDB);
-//        return pessoaDTO_New;
     }
 
-    private PessoaDTO converter (Pessoa pessoa) {
-        PessoaDTO result = new PessoaDTO();
-        result.setId(pessoa.getId());
+    private PessoaForm converter (Pessoa pessoa) {
+        PessoaForm result = new PessoaForm();
         result.setNome(pessoa.getNome());
         result.setData_nascimento(pessoa.getData_nascimento());
         result.setSexo(pessoa.getSexo());
@@ -102,7 +98,7 @@ public class PessoaFacade {
         return result;
     }
 
-    public List<PessoaDTO> getAll() {
+    public List<PessoaForm> getAll() {
         return repositorioPessoas
                 .findAll()
                 .stream()

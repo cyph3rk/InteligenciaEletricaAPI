@@ -1,7 +1,6 @@
 package com.InteligenciaEletricaAPI.repositorio;
 
 import com.InteligenciaEletricaAPI.dominio.Pessoa;
-import com.InteligenciaEletricaAPI.dto.PessoaDTO;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

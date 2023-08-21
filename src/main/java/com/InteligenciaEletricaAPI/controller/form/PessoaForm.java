@@ -1,7 +1,6 @@
 package com.InteligenciaEletricaAPI.controller.form;
 
 import com.InteligenciaEletricaAPI.dominio.Pessoa;
-import com.InteligenciaEletricaAPI.dto.PessoaDTO;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
@@ -31,7 +30,7 @@ public class PessoaForm {
     @NotBlank(message = "Campo RELACIONAMENTO é obrigatorio")
     private String relacionamento;
 
-    public PessoaDTO toPessoaDTO() {
-        return new PessoaDTO(nome, data_nascimento, sexo, codigo_cliente, relacionamento);
+    public Pessoa toPessoa() {
+        return new Pessoa(nome, data_nascimento, sexo, codigo_cliente, relacionamento);
     }
 }

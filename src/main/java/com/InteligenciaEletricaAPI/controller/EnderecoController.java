@@ -2,7 +2,6 @@ package com.InteligenciaEletricaAPI.controller;
 
 
 import com.InteligenciaEletricaAPI.controller.form.EnderecoForm;
-import com.InteligenciaEletricaAPI.dto.EnderecoDTO;
 import com.InteligenciaEletricaAPI.facade.EnderecoFacade;
 import com.InteligenciaEletricaAPI.repositorio.RepositorioEnderecos;
 import jakarta.validation.ConstraintViolation;
@@ -55,8 +54,7 @@ public class EnderecoController {
             return ResponseEntity.badRequest().body(violacoesToMap);
         }
 
-        EnderecoDTO enderecoDTO = enderecoForm.toEnderecoDTO();
-        Long resp = enderecoFacade.salvar(enderecoDTO);
+        Long resp = enderecoFacade.salvar(enderecoForm);
         if ( resp == -1) {
             return ResponseEntity.badRequest().body("{\"Erro\": \"Endereco JÁ cadastrado.\"}");
         }

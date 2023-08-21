@@ -1,7 +1,7 @@
 package com.InteligenciaEletricaAPI.facade;
 
+import com.InteligenciaEletricaAPI.controller.form.EnderecoForm;
 import com.InteligenciaEletricaAPI.dominio.Endereco;
-import com.InteligenciaEletricaAPI.dto.EnderecoDTO;
 import com.InteligenciaEletricaAPI.repositorio.RepositorioEnderecos;
 import com.InteligenciaEletricaAPI.repositorio.RepositorioPessoas;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,28 +20,26 @@ public class EnderecoFacade {
         this.repositorioEnderecos = repositorioEnderecos;
     }
 
-    public Long salvar(EnderecoDTO enderecoDTO) {
-        List<EnderecoDTO> encontrado = buscarPorRua(enderecoDTO.getRua());
+    public Long salvar(EnderecoForm enderecoForm) {
+        List<EnderecoForm> encontrado = buscarPorRua(enderecoForm.getRua());
         if (encontrado.size() >= 1) {
             return -1L;
         }
 
         Endereco endereco = new Endereco();
-        endereco.setRua(enderecoDTO.getRua());
-        endereco.setNumero(enderecoDTO.getNumero());
-        endereco.setBairro(enderecoDTO.getBairro());
-        endereco.setCidade(enderecoDTO.getCidade());
-        endereco.setEstado(enderecoDTO.getEstado());
+        endereco.setRua(enderecoForm.getRua());
+        endereco.setNumero(enderecoForm.getNumero());
+        endereco.setBairro(enderecoForm.getBairro());
+        endereco.setCidade(enderecoForm.getCidade());
+        endereco.setEstado(enderecoForm.getEstado());
 
         repositorioEnderecos.save(endereco);
-        enderecoDTO.setId(endereco.getId());
 
-        return enderecoDTO.getId();
+        return endereco.getId();
     }
 
-    private EnderecoDTO converter (Endereco endereco) {
-        EnderecoDTO result = new EnderecoDTO();
-        result.setId(endereco.getId());
+    private EnderecoForm converter (Endereco endereco) {
+        EnderecoForm result = new EnderecoForm();
         result.setRua(endereco.getRua());
         result.setNumero(endereco.getNumero());
         result.setBairro(endereco.getBairro());
@@ -51,7 +49,7 @@ public class EnderecoFacade {
         return result;
     }
 
-    public List<EnderecoDTO> buscarPorRua(String rua) {
+    public List<EnderecoForm> buscarPorRua(String rua) {
         List<Endereco> listaEnderecos = repositorioEnderecos.findByRua(rua);
 
         return listaEnderecos.stream()
