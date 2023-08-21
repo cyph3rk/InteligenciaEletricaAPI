@@ -1,7 +1,6 @@
 package com.InteligenciaEletricaAPI.controller;
 
 import com.InteligenciaEletricaAPI.controller.form.PessoaForm;
-import com.InteligenciaEletricaAPI.dominio.Pessoa;
 import com.InteligenciaEletricaAPI.dto.PessoaDTO;
 import com.InteligenciaEletricaAPI.facade.PessoaFacade;
 import com.InteligenciaEletricaAPI.repositorio.RepositorioPessoas;
@@ -33,13 +32,13 @@ public class PessoaController {
 
     private final Validator validator;
 
-    @Autowired
-    private PessoaFacade pessoaFacade;
+    private final PessoaFacade pessoaFacade;
 
     @Autowired
-    public PessoaController(RepositorioPessoas repositorioPessoas, Validator validator) {
+    public PessoaController(RepositorioPessoas repositorioPessoas, Validator validator, PessoaFacade pessoaFacade) {
         this.repositorioPessoas = repositorioPessoas;
         this.validator = validator;
+        this.pessoaFacade = pessoaFacade;
     }
 
     private <T> Map<Path, String> validar(T form) {

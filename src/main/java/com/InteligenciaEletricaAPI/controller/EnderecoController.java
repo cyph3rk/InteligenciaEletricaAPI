@@ -2,14 +2,9 @@ package com.InteligenciaEletricaAPI.controller;
 
 
 import com.InteligenciaEletricaAPI.controller.form.EnderecoForm;
-import com.InteligenciaEletricaAPI.dominio.Endereco;
 import com.InteligenciaEletricaAPI.dto.EnderecoDTO;
-import com.InteligenciaEletricaAPI.dto.PessoaDTO;
 import com.InteligenciaEletricaAPI.facade.EnderecoFacade;
-import com.InteligenciaEletricaAPI.facade.PessoaFacade;
 import com.InteligenciaEletricaAPI.repositorio.RepositorioEnderecos;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Path;
 import jakarta.validation.Validator;
@@ -21,7 +16,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -35,13 +29,13 @@ public class EnderecoController {
 
     private final Validator validator;
 
-    @Autowired
-    private EnderecoFacade enderecoFacade;
+    private final EnderecoFacade enderecoFacade;
 
     @Autowired
-    public EnderecoController(RepositorioEnderecos repositorioEnderecos, Validator validator) {
+    public EnderecoController(RepositorioEnderecos repositorioEnderecos, Validator validator, EnderecoFacade enderecoFacade) {
         this.repositorioEnderecos = repositorioEnderecos;
         this.validator = validator;
+        this.enderecoFacade = enderecoFacade;
     }
 
     private <T> Map<Path, String> validar(T form) {
@@ -51,10 +45,9 @@ public class EnderecoController {
                 ConstraintViolation::getPropertyPath, ConstraintViolation::getMessage));
     }
 
-    @PostMapping("/{pessoa_id}")
-    public ResponseEntity<Object>  cadastraEndereco(@PathVariable Long pessoa_id, @RequestBody EnderecoForm enderecoForm) {
+    @PostMapping
+    public ResponseEntity<Object>  cadastraEndereco(@RequestBody EnderecoForm enderecoForm) {
         logger.info("POST - Try : Cadastro de um novo Endereco: Rua: " + enderecoForm.getRua());
-        logger.info("POST - Try : Cadastro de um novo Endereco: Id: " + pessoa_id);
 
         Map<Path, String> violacoesToMap = validar(enderecoForm);
 
