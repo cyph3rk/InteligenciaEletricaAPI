@@ -1,7 +1,9 @@
 package com.InteligenciaEletricaAPI.facade;
 
 import com.InteligenciaEletricaAPI.controller.form.PessoaForm;
+import com.InteligenciaEletricaAPI.dominio.Endereco;
 import com.InteligenciaEletricaAPI.dominio.Pessoa;
+import com.InteligenciaEletricaAPI.repositorio.RepositorioEnderecos;
 import com.InteligenciaEletricaAPI.repositorio.RepositorioPessoas;
 
 import jakarta.persistence.EntityNotFoundException;
@@ -10,8 +12,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -19,11 +23,13 @@ public class PessoaFacade {
 
     private static final Logger logger = LoggerFactory.getLogger(PessoaFacade.class);
 
-    private RepositorioPessoas repositorioPessoas;
+    private final RepositorioPessoas repositorioPessoas;
+    private final RepositorioEnderecos repositorioEnderecos;
 
     @Autowired
-    public PessoaFacade(RepositorioPessoas repositorioPessoas) {
+    public PessoaFacade(RepositorioPessoas repositorioPessoas, RepositorioEnderecos repositorioEnderecos) {
         this.repositorioPessoas = repositorioPessoas;
+        this.repositorioEnderecos = repositorioEnderecos;
     }
 
     public Long salvar(PessoaForm pessoaForm) {

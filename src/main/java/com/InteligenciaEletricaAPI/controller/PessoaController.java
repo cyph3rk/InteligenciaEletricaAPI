@@ -1,8 +1,8 @@
 package com.InteligenciaEletricaAPI.controller;
 
 import com.InteligenciaEletricaAPI.controller.form.PessoaForm;
+import com.InteligenciaEletricaAPI.facade.EnderecoFacade;
 import com.InteligenciaEletricaAPI.facade.PessoaFacade;
-import com.InteligenciaEletricaAPI.repositorio.RepositorioPessoas;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.validation.ConstraintViolation;
@@ -27,17 +27,16 @@ public class PessoaController {
 
     private static final Logger logger = LoggerFactory.getLogger(PessoaController.class);
 
-    private final RepositorioPessoas repositorioPessoas;
-
     private final Validator validator;
 
     private final PessoaFacade pessoaFacade;
+    private final EnderecoFacade enderecoFacade;
 
     @Autowired
-    public PessoaController(RepositorioPessoas repositorioPessoas, Validator validator, PessoaFacade pessoaFacade) {
-        this.repositorioPessoas = repositorioPessoas;
+    public PessoaController(Validator validator, PessoaFacade pessoaFacade, EnderecoFacade enderecoFacade) {
         this.validator = validator;
         this.pessoaFacade = pessoaFacade;
+        this.enderecoFacade = enderecoFacade;
     }
 
     private <T> Map<Path, String> validar(T form) {
@@ -69,6 +68,13 @@ public class PessoaController {
         logger.info("POST - Sucesso : Cadastro Pessoa: Nome: " + pessoaForm.getNome() + "Id: " + resp);
         return ResponseEntity.status(HttpStatus.CREATED).body("{\"Messagem\": \"Pessoa CADASTRADO com sucesso.\", " +
                                                               "\"id\": \"" + resp +"\"}");
+    }
+
+    @PostMapping("/{id}/cadastraEnderecos")
+    public ResponseEntity<Object> cadastraEnderecosPessoa(@PathVariable Long id,
+                                                @RequestBody Set<Long> idsEnderecos) {
+        enderecoFacade.salvarIdsEnderecos(id, idsEnderecos);
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping
