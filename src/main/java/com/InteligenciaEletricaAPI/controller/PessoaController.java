@@ -110,7 +110,7 @@ public class PessoaController {
     public ResponseEntity<Object> getPessoaPorNome(@PathVariable String nome) {
         List<PessoaForm> pessoaForms = pessoaFacade.buscarPorNome(nome);
 
-        if (pessoaForms.size() <= 0) {
+        if (pessoaForms.size() == 0) {
             return ResponseEntity.badRequest().body("{\"Erro\": \"Pessoa NÃO cadastrado.\"}");
         }
 

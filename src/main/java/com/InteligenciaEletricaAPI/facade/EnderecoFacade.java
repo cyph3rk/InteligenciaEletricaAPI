@@ -1,6 +1,7 @@
 package com.InteligenciaEletricaAPI.facade;
 
 import com.InteligenciaEletricaAPI.controller.form.EnderecoForm;
+import com.InteligenciaEletricaAPI.controller.form.PessoaForm;
 import com.InteligenciaEletricaAPI.dominio.Endereco;
 import com.InteligenciaEletricaAPI.dominio.Pessoa;
 import com.InteligenciaEletricaAPI.repositorio.RepositorioEnderecos;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -70,6 +72,49 @@ public class EnderecoFacade {
         }
     }
 
+    public List<EnderecoForm> buscarPorRua(String rua) {
+        List<Endereco> listaEnderecos = repositorioEnderecos.findByRua(rua);
+
+        return listaEnderecos.stream()
+                .map(this::converter).collect(Collectors.toList());
+    }
+
+    public Optional<EnderecoForm> buscarPorId(Long id) {
+
+        try {
+            Endereco endereco = repositorioEnderecos.getReferenceById(id);
+
+            EnderecoForm enderecoForm = new EnderecoForm();
+            enderecoForm.setRua(endereco.getRua());
+            enderecoForm.setNumero(endereco.getNumero());
+            enderecoForm.setBairro(endereco.getBairro());
+            enderecoForm.setCidade(endereco.getCidade());
+            enderecoForm.setEstado(endereco.getEstado());
+
+            return Optional.of(enderecoForm);
+        } catch (EntityNotFoundException ex) {
+            logger.info("PessoaFacade - buscarPorId Id: " + id + (" Não cadastrado"));
+            return Optional.empty();
+        }
+    }
+
+    public void remove(Long id) {
+        //Todo: Implementar a verificação se cadastro existe antes de deletar
+        repositorioEnderecos.deleteById(id);
+    }
+
+    //TODO: Resolver o problema de alterar o nome para um que ja existe quebrando a regra de duplicidade
+    public void altera(Long id, EnderecoForm enderecoForm_New) {
+        Endereco enderecoDB = repositorioEnderecos.getReferenceById(id);
+        enderecoDB.setRua(enderecoForm_New.getRua());
+        enderecoDB.setNumero(enderecoForm_New.getNumero());
+        enderecoDB.setBairro(enderecoForm_New.getBairro());
+        enderecoDB.setCidade(enderecoForm_New.getCidade());
+        enderecoDB.setEstado(enderecoForm_New.getEstado());
+
+        repositorioEnderecos.save(enderecoDB);
+    }
+
     private EnderecoForm converter (Endereco endereco) {
         EnderecoForm result = new EnderecoForm();
         result.setRua(endereco.getRua());
@@ -81,11 +126,24 @@ public class EnderecoFacade {
         return result;
     }
 
-    public List<EnderecoForm> buscarPorRua(String rua) {
-        List<Endereco> listaEnderecos = repositorioEnderecos.findByRua(rua);
-
-        return listaEnderecos.stream()
+    public List<EnderecoForm> getAll() {
+        return repositorioEnderecos
+                .findAll()
+                .stream()
                 .map(this::converter).collect(Collectors.toList());
     }
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+

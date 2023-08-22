@@ -77,8 +77,8 @@ public class PessoaFacade {
     }
 
     public void remove(Long id) {
+        //Todo: Implementar a verificação se cadastro existe antes de deletar
         repositorioPessoas.deleteById(id);
-//        return "DELETED";
     }
 
     //TODO: Resolver o problema de alterar o nome para um que ja existe quebrando a regra de duplicidade
