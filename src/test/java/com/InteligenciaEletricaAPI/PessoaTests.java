@@ -39,11 +39,8 @@ class PessoaTests {
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-
         HttpEntity<String> requestEntity = new HttpEntity<>(requestBody, headers);
-
         ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, requestEntity, String.class);
-
         Assert.assertEquals(HttpStatus.CREATED, response.getStatusCode());
 
         try {
@@ -462,6 +459,72 @@ class PessoaTests {
         Assert.assertTrue(response.getBody() != null && response.getBody().contains("{\"Erro\": \"Pessoa NÃO cadastrado.\"}"));
     }
 
+    @Test
+    public void testeAssociacaoPessoaEnderecos() {
+
+        String url = "http://localhost:" + port + "/pessoa";
+        String randomWord = generaPalavraRandomica(8);
+
+        String requestBody = "{\"nome\":\"" + randomWord + "\"," +
+                "\"data_nascimento\":\"02/09/1977\"," +
+                "\"sexo\":\"Masculino\"," +
+                "\"codigo_cliente\":\"12345\"," +
+                "\"relacionamento\":\"Filho\"}";
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<String> requestEntity = new HttpEntity<>(requestBody, headers);
+        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, requestEntity, String.class);
+        Assert.assertEquals(HttpStatus.CREATED, response.getStatusCode());
+
+        String pessoa_id = "";
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode jsonNode = objectMapper.readTree(response.getBody());
+
+            String mensagem = jsonNode.get("Messagem").asText();
+            pessoa_id = jsonNode.get("id").asText();
+
+            Assert.assertEquals(mensagem, "Pessoa CADASTRADO com sucesso.");
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+
+        String randomWord_id1 = generaPalavraRandomica(8);
+        String endereco_id1 = cadastrandoEnderecoSucesso(randomWord_id1);
+
+        String randomWord_id2 = generaPalavraRandomica(8);
+        String endereco_id2 = cadastrandoEnderecoSucesso(randomWord_id2);
+
+        String randomWord_id3 = generaPalavraRandomica(8);
+        String endereco_id3 = cadastrandoEnderecoSucesso(randomWord_id3);
+
+        url = "http://localhost:" + port + "/pessoa/" + pessoa_id + "/cadastraEnderecos";
+
+        requestBody = "[" + endereco_id1 + "," + endereco_id2 + "," + endereco_id3 + "]";
+
+        headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        requestEntity = new HttpEntity<>(requestBody, headers);
+        response = restTemplate.exchange(url, HttpMethod.POST, requestEntity, String.class);
+        Assert.assertEquals(HttpStatus.CREATED, response.getStatusCode());
+
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode jsonNode = objectMapper.readTree(response.getBody());
+
+            String mensagem = jsonNode.get("Messagem").asText();
+            pessoa_id = jsonNode.get("id").asText();
+
+            Assert.assertEquals(mensagem, "Pessoa ASSOCIADA a endereços com sucesso.");
+            String idsREsp = "[" + endereco_id1 + ", " + endereco_id2 + ", " + endereco_id3 + "]";
+            Assert.assertEquals(pessoa_id, idsREsp);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+    }
+
+
     private static String generaPalavraRandomica(int length) {
         String allowedChars = "abcdefghijklmnopqrstuvwxyz"; // caracteres permitidos
         Random random = new Random();
@@ -474,6 +537,37 @@ class PessoaTests {
         }
 
         return word.toString();
+    }
+
+    private String cadastrandoEnderecoSucesso(String randomWord) {
+        String url = "http://localhost:" + port + "/endereco";
+
+        String requestBody = "{\"rua\":\"" + randomWord + "\"," +
+                "\"numero\":\"130\"," +
+                "\"bairro\":\"Bela Vista I\"," +
+                "\"cidade\":\"São José\"," +
+                "\"estado\":\"Santa Catarina\"}";
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<String> requestEntity = new HttpEntity<>(requestBody, headers);
+        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, requestEntity, String.class);
+        Assert.assertEquals(HttpStatus.CREATED, response.getStatusCode());
+
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode jsonNode = objectMapper.readTree(response.getBody());
+
+            String mensagem = jsonNode.get("Messagem").asText();
+            String id = jsonNode.get("id").asText();
+
+            Assert.assertEquals(mensagem, "Endereco CADASTRADO com sucesso.");
+
+            return id;
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            return  "Falha";
+        }
     }
 
 }
