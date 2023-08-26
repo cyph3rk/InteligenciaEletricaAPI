@@ -1,11 +1,10 @@
 package com.InteligenciaEletricaAPI.facade;
 
-import com.InteligenciaEletricaAPI.controller.form.EnderecoForm;
-import com.InteligenciaEletricaAPI.controller.form.PessoaForm;
 import com.InteligenciaEletricaAPI.dominio.Endereco;
 import com.InteligenciaEletricaAPI.dominio.Pessoa;
-import com.InteligenciaEletricaAPI.repositorio.RepositorioEnderecos;
-import com.InteligenciaEletricaAPI.repositorio.RepositorioPessoas;
+import com.InteligenciaEletricaAPI.dto.EnderecoDto;
+import com.InteligenciaEletricaAPI.repositorio.IEnderecosRepositorio;
+import com.InteligenciaEletricaAPI.repositorio.IPessoasRepositorio;
 import jakarta.persistence.EntityNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,27 +22,27 @@ public class EnderecoFacade {
 
     private static final Logger logger = LoggerFactory.getLogger(EnderecoFacade.class);
 
-    private final RepositorioPessoas repositorioPessoas;
-    private final RepositorioEnderecos repositorioEnderecos;
+    private final IPessoasRepositorio repositorioPessoas;
+    private final IEnderecosRepositorio repositorioEnderecos;
 
     @Autowired
-    public EnderecoFacade(RepositorioPessoas repositorioPessoas, RepositorioEnderecos repositorioEnderecos) {
+    public EnderecoFacade(IPessoasRepositorio repositorioPessoas, IEnderecosRepositorio repositorioEnderecos) {
         this.repositorioPessoas = repositorioPessoas;
         this.repositorioEnderecos = repositorioEnderecos;
     }
 
-    public Long salvar(EnderecoForm enderecoForm) {
-        List<EnderecoForm> encontrado = buscarPorRua(enderecoForm.getRua());
+    public Long salvar(EnderecoDto enderecoDto) {
+        List<EnderecoDto> encontrado = buscarPorRua(enderecoDto.getRua());
         if (encontrado.size() >= 1) {
             return -1L;
         }
 
         Endereco endereco = new Endereco();
-        endereco.setRua(enderecoForm.getRua());
-        endereco.setNumero(enderecoForm.getNumero());
-        endereco.setBairro(enderecoForm.getBairro());
-        endereco.setCidade(enderecoForm.getCidade());
-        endereco.setEstado(enderecoForm.getEstado());
+        endereco.setRua(enderecoDto.getRua());
+        endereco.setNumero(enderecoDto.getNumero());
+        endereco.setBairro(enderecoDto.getBairro());
+        endereco.setCidade(enderecoDto.getCidade());
+        endereco.setEstado(enderecoDto.getEstado());
 
         repositorioEnderecos.save(endereco);
 
@@ -72,26 +71,27 @@ public class EnderecoFacade {
         }
     }
 
-    public List<EnderecoForm> buscarPorRua(String rua) {
+    public List<EnderecoDto> buscarPorRua(String rua) {
         List<Endereco> listaEnderecos = repositorioEnderecos.findByRua(rua);
 
         return listaEnderecos.stream()
                 .map(this::converter).collect(Collectors.toList());
     }
 
-    public Optional<EnderecoForm> buscarPorId(Long id) {
+    public Optional<EnderecoDto> buscarPorId(Long id) {
 
         try {
             Endereco endereco = repositorioEnderecos.getReferenceById(id);
 
-            EnderecoForm enderecoForm = new EnderecoForm();
-            enderecoForm.setRua(endereco.getRua());
-            enderecoForm.setNumero(endereco.getNumero());
-            enderecoForm.setBairro(endereco.getBairro());
-            enderecoForm.setCidade(endereco.getCidade());
-            enderecoForm.setEstado(endereco.getEstado());
+            EnderecoDto enderecoDto = new EnderecoDto();
+            enderecoDto.setId(endereco.getId());
+            enderecoDto.setRua(endereco.getRua());
+            enderecoDto.setNumero(endereco.getNumero());
+            enderecoDto.setBairro(endereco.getBairro());
+            enderecoDto.setCidade(endereco.getCidade());
+            enderecoDto.setEstado(endereco.getEstado());
 
-            return Optional.of(enderecoForm);
+            return Optional.of(enderecoDto);
         } catch (EntityNotFoundException ex) {
             logger.info("PessoaFacade - buscarPorId Id: " + id + (" Não cadastrado"));
             return Optional.empty();
@@ -104,19 +104,21 @@ public class EnderecoFacade {
     }
 
     //TODO: Resolver o problema de alterar o nome para um que ja existe quebrando a regra de duplicidade
-    public void altera(Long id, EnderecoForm enderecoForm_New) {
-        Endereco enderecoDB = repositorioEnderecos.getReferenceById(id);
-        enderecoDB.setRua(enderecoForm_New.getRua());
-        enderecoDB.setNumero(enderecoForm_New.getNumero());
-        enderecoDB.setBairro(enderecoForm_New.getBairro());
-        enderecoDB.setCidade(enderecoForm_New.getCidade());
-        enderecoDB.setEstado(enderecoForm_New.getEstado());
+    public void altera(EnderecoDto enderecoDto_New) {
+        Endereco endereco = repositorioEnderecos.getReferenceById(enderecoDto_New.getId());
+        endereco.setId(enderecoDto_New.getId());
+        endereco.setRua(enderecoDto_New.getRua());
+        endereco.setNumero(enderecoDto_New.getNumero());
+        endereco.setBairro(enderecoDto_New.getBairro());
+        endereco.setCidade(enderecoDto_New.getCidade());
+        endereco.setEstado(enderecoDto_New.getEstado());
 
-        repositorioEnderecos.save(enderecoDB);
+        repositorioEnderecos.save(endereco);
     }
 
-    private EnderecoForm converter (Endereco endereco) {
-        EnderecoForm result = new EnderecoForm();
+    private EnderecoDto converter (Endereco endereco) {
+        EnderecoDto result = new EnderecoDto();
+        result.setId(endereco.getId());
         result.setRua(endereco.getRua());
         result.setNumero(endereco.getNumero());
         result.setBairro(endereco.getBairro());
@@ -126,7 +128,7 @@ public class EnderecoFacade {
         return result;
     }
 
-    public List<EnderecoForm> getAll() {
+    public List<EnderecoDto> getAll() {
         return repositorioEnderecos
                 .findAll()
                 .stream()

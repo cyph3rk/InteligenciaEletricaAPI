@@ -1,6 +1,7 @@
 package com.InteligenciaEletricaAPI.controller;
 
 import com.InteligenciaEletricaAPI.controller.form.PessoaForm;
+import com.InteligenciaEletricaAPI.dto.PessoaDto;
 import com.InteligenciaEletricaAPI.facade.EnderecoFacade;
 import com.InteligenciaEletricaAPI.facade.PessoaFacade;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -60,12 +61,13 @@ public class PessoaController {
             return ResponseEntity.badRequest().body(violacoesToMap);
         }
 
-        Long resp = pessoaFacade.salvar(pessoaForm);
+        PessoaDto pessoaDTO = pessoaForm.toPessoaDto();
+        Long resp = pessoaFacade.salvar(pessoaDTO);
         if ( resp == -1) {
             return ResponseEntity.badRequest().body("{\"Erro\": \"Pessoa JÁ cadastrado.\"}");
         }
 
-        logger.info("POST - Sucesso : Cadastro Pessoa: Nome: " + pessoaForm.getNome() + "Id: " + resp);
+        logger.info("POST - Sucesso : Cadastro Pessoa: Nome: " + pessoaDTO.getNome() + "Id: " + resp);
         return ResponseEntity.status(HttpStatus.CREATED).body("{\"Messagem\": \"Pessoa CADASTRADO com sucesso.\", " +
                                                               "\"id\": \"" + resp +"\"}");
     }
@@ -74,7 +76,8 @@ public class PessoaController {
     public ResponseEntity<Object> cadastraEnderecosPessoa(@PathVariable Long id,
                                                 @RequestBody Set<Long> idsEnderecos) {
         enderecoFacade.salvarIdsEnderecos(id, idsEnderecos);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.status(HttpStatus.CREATED).body("{\"Messagem\": \"Pessoa ASSOCIADA a endereços com sucesso.\", " +
+                                                              "\"id\": \"" + idsEnderecos +"\"}");
     }
 
     @GetMapping
@@ -96,33 +99,34 @@ public class PessoaController {
     public ResponseEntity<Object> getPessoaPorId(@PathVariable Long id) {
         logger.info("GET - Pedido de Pessoa por Id: " + id);
 
-        Optional<PessoaForm> pessoaForm = pessoaFacade.buscarPorId(id);
+        Optional<PessoaDto> pessoaDto = pessoaFacade.buscarPorId(id);
 
-        boolean existeRegistro = pessoaForm.isPresent();
+        boolean existeRegistro = pessoaDto.isPresent();
         if (!existeRegistro) {
             return ResponseEntity.badRequest().body("{\"Erro\": \"Pessoa NÃO cadastrado.\"}");
         }
 
-        return ResponseEntity.status(HttpStatus.OK).body(pessoaForm);
+        return ResponseEntity.status(HttpStatus.OK).body(pessoaDto);
     }
 
     @GetMapping("/nome/{nome}")
     public ResponseEntity<Object> getPessoaPorNome(@PathVariable String nome) {
-        List<PessoaForm> pessoaForms = pessoaFacade.buscarPorNome(nome);
 
-        if (pessoaForms.size() == 0) {
+        List<PessoaDto> pessoaDtos = pessoaFacade.buscarPorNome(nome);
+
+        if (pessoaDtos.size() == 0) {
             return ResponseEntity.badRequest().body("{\"Erro\": \"Pessoa NÃO cadastrado.\"}");
         }
 
-        return ResponseEntity.status(HttpStatus.OK).body(pessoaForms);
+        return ResponseEntity.status(HttpStatus.OK).body(pessoaDtos);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deletePessoaPorId(@PathVariable Long id) {
 
-        Optional<PessoaForm> pessoaForm = pessoaFacade.buscarPorId(id);
+        Optional<PessoaDto> pessoaDto = pessoaFacade.buscarPorId(id);
 
-        boolean existeRegistro = pessoaForm.isPresent();
+        boolean existeRegistro = pessoaDto.isPresent();
         if (!existeRegistro) {
             return ResponseEntity.badRequest().body("{\"Erro\": \"Pessoa NÃO cadastrado.\"}");
         }
@@ -139,14 +143,15 @@ public class PessoaController {
             return ResponseEntity.badRequest().body(violacoesToMap);
         }
 
-        Optional<PessoaForm> pessoaForm_old = pessoaFacade.buscarPorId(id);
+        Optional<PessoaDto> pessoaDto_old = pessoaFacade.buscarPorId(id);
 
-        boolean existeRegistro = pessoaForm_old.isPresent();
+        boolean existeRegistro = pessoaDto_old.isPresent();
         if (!existeRegistro) {
             return ResponseEntity.badRequest().body("{\"Erro\": \"Pessoa NÃO cadastrado.\"}");
         }
 
-        pessoaFacade.altera(id, pessoaForm);
+        PessoaDto pessoaDTO_new = pessoaForm.toPessoaDto();
+        pessoaFacade.altera(id, pessoaDTO_new);
         return ResponseEntity.status(HttpStatus.OK).body(pessoaForm);
     }
 
