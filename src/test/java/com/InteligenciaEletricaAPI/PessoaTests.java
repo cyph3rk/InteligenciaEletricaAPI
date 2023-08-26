@@ -13,6 +13,8 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.*;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.Random;
+
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class PessoaTests {
@@ -27,10 +29,13 @@ class PessoaTests {
     public void testeCadastrandoPessoaSucesso() {
         String url = "http://localhost:" + port + "/pessoa";
 
-        String requestBody = "{\"nome\":\"Diego Vargas\"," +
-                "\"dataNascimento\":\"02/09/1977\"," +
+        String randomWord = generaPalavraRandomica(8);
+
+        String requestBody = "{\"nome\":\"" + randomWord + "\"," +
+                "\"data_nascimento\":\"02/09/1977\"," +
                 "\"sexo\":\"Masculino\"," +
-                "\"parentesco\":\"Filho\"}";
+                "\"codigo_cliente\":\"12345\"," +
+                "\"relacionamento\":\"Filho\"}";
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -57,24 +62,25 @@ class PessoaTests {
     public void testeTentativaCadastrandoPessoaDuplicado() {
         String url = "http://localhost:" + port + "/pessoa";
 
-        String requestBody = "{\"nome\":\"Diego Teste Duplicado\"," +
-                "\"dataNascimento\":\"02/09/1977\"," +
+        String requestBody = "{\"nome\":\"Diego Vargas\"," +
+                "\"data_nascimento\":\"02/09/1977\"," +
                 "\"sexo\":\"Masculino\"," +
-                "\"parentesco\":\"Filho\"}";
+                "\"codigo_cliente\":\"12345\"," +
+                "\"relacionamento\":\"Filho\"}";
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<String> requestEntity = new HttpEntity<>(requestBody, headers);
         ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, requestEntity, String.class);
-        Assert.assertEquals(HttpStatus.CREATED, response.getStatusCode());
+        Assert.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
 
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             JsonNode jsonNode = objectMapper.readTree(response.getBody());
 
-            String mensagem = jsonNode.get("Messagem").asText();
+            String mensagem = jsonNode.get("Erro").asText();
 
-            Assert.assertEquals(mensagem, "Pessoa CADASTRADO com sucesso.");
+            Assert.assertEquals(mensagem, "Pessoa JÁ cadastrado.");
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
@@ -89,9 +95,10 @@ class PessoaTests {
         String url = "http://localhost:" + port + "/pessoa";
 
         String requestBody = "{\"nome\":\"\"," +
-                "\"dataNascimento\":\"02/09/1977\"," +
+                "\"data_nascimento\":\"02/09/1977\"," +
                 "\"sexo\":\"Masculino\"," +
-                "\"parentesco\":\"Filho\"}";
+                "\"codigo_cliente\":\"12345\"," +
+                "\"relacionamento\":\"Filho\"}";
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -105,9 +112,10 @@ class PessoaTests {
     public void testeCadastrandoPessoaCampoNomeNulo() {
         String url = "http://localhost:" + port + "/pessoa";
 
-        String requestBody = "{\"dataNascimento\":\"02/09/1977\"," +
+        String requestBody = "{\"data_nascimento\":\"02/09/1977\"," +
                 "\"sexo\":\"Masculino\"," +
-                "\"parentesco\":\"Filho\"}";
+                "\"codigo_cliente\":\"12345\"," +
+                "\"relacionamento\":\"Filho\"}";
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -123,9 +131,10 @@ class PessoaTests {
         String url = "http://localhost:" + port + "/pessoa";
 
         String requestBody = "{\"nome\":\"Diego Teste Duplicado\"," +
-                "\"dataNascimento\":\"\"," +
+                "\"data_nascimento\":\"\"," +
                 "\"sexo\":\"Masculino\"," +
-                "\"parentesco\":\"Filho\"}";
+                "\"codigo_cliente\":\"12345\"," +
+                "\"relacionamento\":\"Filho\"}";
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -141,7 +150,8 @@ class PessoaTests {
 
         String requestBody = "{\"nome\":\"Diego Teste Duplicado\"," +
                 "\"sexo\":\"Masculino\"," +
-                "\"parentesco\":\"Filho\"}";
+                "\"codigo_cliente\":\"12345\"," +
+                "\"relacionamento\":\"Filho\"}";
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -157,9 +167,10 @@ class PessoaTests {
         String url = "http://localhost:" + port + "/pessoa";
 
         String requestBody = "{\"nome\":\"Diego Teste Duplicado\"," +
-                "\"dataNascimento\":\"02/09/1977\"," +
+                "\"data_nascimento\":\"02/09/1977\"," +
                 "\"sexo\":\"\"," +
-                "\"parentesco\":\"Filho\"}";
+                "\"codigo_cliente\":\"12345\"," +
+                "\"relacionamento\":\"Filho\"}";
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -174,8 +185,9 @@ class PessoaTests {
         String url = "http://localhost:" + port + "/pessoa";
 
         String requestBody = "{\"nome\":\"Diego Teste Duplicado\"," +
-                "\"dataNascimento\":\"02/09/1977\"," +
-                "\"parentesco\":\"Filho\"}";
+                "\"data_nascimento\":\"02/09/1977\"," +
+                "\"codigo_cliente\":\"12345\"," +
+                "\"relacionamento\":\"Filho\"}";
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -187,29 +199,31 @@ class PessoaTests {
     }
 
     @Test
-    public void testeCadastrandoPessoaCampoParentescoBranco() {
+    public void testeCadastrandoPessoaCampoRelacionamentoBranco() {
         String url = "http://localhost:" + port + "/pessoa";
 
         String requestBody = "{\"nome\":\"Diego Teste Duplicado\"," +
-                "\"dataNascimento\":\"02/09/1977\"," +
+                "\"data_nascimento\":\"02/09/1977\"," +
                 "\"sexo\":\"Masculino\"," +
-                "\"parentesco\":\"\"}";
+                "\"codigo_cliente\":\"12345\"," +
+                "\"relacionamento\":\"\"}";
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<String> requestEntity = new HttpEntity<>(requestBody, headers);
         ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, requestEntity, String.class);
         Assert.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        Assert.assertTrue(response.getBody() != null && response.getBody().contains("\"Campo PARENTESCO é obrigatorio\""));
+        Assert.assertTrue(response.getBody() != null && response.getBody().contains("\"Campo RELACIONAMENTO é obrigatorio\""));
     }
 
     @Test
-    public void testeCadastrandoPessoaCampoParentescoNulo() {
+    public void testeCadastrandoPessoaCampoRelacionamentoNulo() {
         String url = "http://localhost:" + port + "/pessoa";
 
         String requestBody = "{\"nome\":\"Diego Teste Duplicado\"," +
-                "\"dataNascimento\":\"02/09/1977\"," +
-                "\"sexo\":\"Masculino\"}";
+                "\"data_nascimento\":\"02/09/1977\"," +
+                "\"sexo\":\"Masculino\"," +
+                "\"codigo_cliente\":\"12345\"}";
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -217,17 +231,20 @@ class PessoaTests {
         ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, requestEntity, String.class);
         Assert.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
 
-        Assert.assertTrue(response.getBody() != null && response.getBody().contains("\"Campo PARENTESCO é obrigatorio\""));
+        Assert.assertTrue(response.getBody() != null && response.getBody().contains("\"Campo RELACIONAMENTO é obrigatorio\""));
     }
 
     @Test
     public void testeAlterandoCamposPessoaSucesso() {
         String url = "http://localhost:" + port + "/pessoa";
 
-        String requestBody = "{\"nome\":\"Diego Altera Campos Sucesso\"," +
-                "\"dataNascimento\":\"02/09/1977\"," +
+        String randomWord = generaPalavraRandomica(8);
+
+        String requestBody = "{\"nome\":\"" + randomWord + "\"," +
+                "\"data_nascimento\":\"02/09/1977\"," +
                 "\"sexo\":\"Masculino\"," +
-                "\"parentesco\":\"Filho\"}";
+                "\"codigo_cliente\":\"12345\"," +
+                "\"relacionamento\":\"Filho\"}";
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -235,23 +252,40 @@ class PessoaTests {
         ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, requestEntity, String.class);
         Assert.assertEquals(HttpStatus.CREATED, response.getStatusCode());
 
-        url = "http://localhost:" + port + "/pessoa/1";
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode jsonNode = objectMapper.readTree(response.getBody());
 
-        requestBody = "{\"nome\":\"Diego Alterado Ok\"," +
-                "\"dataNascimento\":\"03/12/2013\"," +
-                "\"sexo\":\"Feminino\"," +
-                "\"parentesco\":\"Irmão\"}";
+            String id = jsonNode.get("id").asText();
 
-        requestEntity = new HttpEntity<>(requestBody, headers);
-        response = restTemplate.exchange(url, HttpMethod.PUT, requestEntity, String.class);
+            url = "http://localhost:" + port + "/pessoa/" + id;
 
-        String resp = "{\"id\":\"1\"," +
-                "\"nome\":\"Diego Alterado Ok\"," +
-                "\"dataNascimento\":\"03/12/2013\"," +
-                "\"sexo\":\"Feminino\"," +
-                "\"parentesco\":\"Irmão\"}";
+            requestBody = "{\"nome\":\"" + randomWord + " 99\"," +
+                    "\"data_nascimento\":\"03/12/2013\"," +
+                    "\"sexo\":\"Feminino\"," +
+                    "\"codigo_cliente\":\"12345\"," +
+                    "\"relacionamento\":\"Irmão\"}";
 
-        Assert.assertTrue(response.getBody() != null && response.getBody().contains(resp));
+            requestEntity = new HttpEntity<>(requestBody, headers);
+            response = restTemplate.exchange(url, HttpMethod.PUT, requestEntity, String.class);
+
+            String resp = "{\"nome\":\"" + randomWord + " 99\"," +
+                    "\"data_nascimento\":\"03/12/2013\"," +
+                    "\"sexo\":\"Feminino\"," +
+                    "\"codigo_cliente\":\"12345\"," +
+                    "\"relacionamento\":\"Irmão\"}";
+
+            Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
+            Assert.assertTrue(response.getBody() != null && response.getBody().contains(resp));
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+
+
+
+
+
+
     }
 
     @Test
@@ -259,9 +293,10 @@ class PessoaTests {
         String url = "http://localhost:" + port + "/pessoa/99";
 
         String requestBody = "{\"nome\":\"Diego Altera Campos falha\"," +
-                "\"dataNascimento\":\"02/09/1977\"," +
+                "\"data_nascimento\":\"02/09/1977\"," +
                 "\"sexo\":\"Masculino\"," +
-                "\"parentesco\":\"Filho\"}";
+                "\"codigo_cliente\":\"12345\"," +
+                "\"relacionamento\":\"Filho\"}";
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -275,10 +310,13 @@ class PessoaTests {
     public void testeDeletaPessoaSucesso() {
         String url = "http://localhost:" + port + "/pessoa";
 
-        String requestBody = "{\"nome\":\"Diego Deleta Sucesso\"," +
-                "\"dataNascimento\":\"02/09/1977\"," +
+        String randomWord = generaPalavraRandomica(8);
+
+        String requestBody = "{\"nome\":\"" + randomWord + "\"," +
+                "\"data_nascimento\":\"02/09/1977\"," +
                 "\"sexo\":\"Masculino\"," +
-                "\"parentesco\":\"Filho\"}";
+                "\"codigo_cliente\":\"12345\"," +
+                "\"relacionamento\":\"Filho\"}";
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -286,11 +324,21 @@ class PessoaTests {
         ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, requestEntity, String.class);
         Assert.assertEquals(HttpStatus.CREATED, response.getStatusCode());
 
-        url = "http://localhost:" + port + "/pessoa/1";
-        requestEntity = new HttpEntity<>(headers);
-        response = restTemplate.exchange(url, HttpMethod.DELETE, requestEntity, String.class);
-        Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
-        Assert.assertTrue(response.getBody() != null && response.getBody().contains("{\"Mensagem\": \"Pessoa DELETADO com sucesso.\"}"));
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode jsonNode = objectMapper.readTree(response.getBody());
+
+            String id = jsonNode.get("id").asText();
+
+            url = "http://localhost:" + port + "/pessoa/" + id;
+            requestEntity = new HttpEntity<>(headers);
+            response = restTemplate.exchange(url, HttpMethod.DELETE, requestEntity, String.class);
+            Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
+            Assert.assertTrue(response.getBody() != null && response.getBody().contains("{\"Mensagem\": \"Pessoa DELETADO com sucesso.\"}"));
+
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
     }
 
     @Test
@@ -309,10 +357,13 @@ class PessoaTests {
     public void testePesquisaPessoaPorNomeSucesso() {
         String url = "http://localhost:" + port + "/pessoa";
 
-        String requestBody = "{\"nome\":\"Diego Pesquisa por Nome\"," +
-                "\"dataNascimento\":\"02/09/1977\"," +
+        String randomWord = generaPalavraRandomica(8);
+
+        String requestBody = "{\"nome\":\"" + randomWord + "\"," +
+                "\"data_nascimento\":\"02/09/1977\"," +
                 "\"sexo\":\"Masculino\"," +
-                "\"parentesco\":\"Filho\"}";
+                "\"codigo_cliente\":\"12345\"," +
+                "\"relacionamento\":\"Filho\"}";
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -329,15 +380,16 @@ class PessoaTests {
 
             Assert.assertEquals(mensagem, "Pessoa CADASTRADO com sucesso.");
 
-            url = "http://localhost:" + port + "/pessoa/nome/Diego Pesquisa por Nome";
+            url = "http://localhost:" + port + "/pessoa/nome/" + randomWord;
             requestEntity = new HttpEntity<>(headers);
             response = restTemplate.exchange(url, HttpMethod.GET, requestEntity, String.class);
 
-            String resp = "{\"id\":\"" + id + "\"," +
-                          "\"nome\":\"Diego Pesquisa por Nome\"," +
-                          "\"dataNascimento\":\"02/09/1977\"," +
+            String resp = "{\"id\":" + id + "," +
+                          "\"nome\":\"" + randomWord + "\"," +
+                          "\"data_nascimento\":\"02/09/1977\"," +
                           "\"sexo\":\"Masculino\"," +
-                          "\"parentesco\":\"Filho\"}";
+                          "\"codigo_cliente\":\"12345\"," +
+                          "\"relacionamento\":\"Filho\"}";
 
             Assert.assertTrue(response.getBody() != null && response.getBody().contains(resp));
 
@@ -361,10 +413,13 @@ class PessoaTests {
     public void testePesquisaPessoaPorIdSucesso() {
         String url = "http://localhost:" + port + "/pessoa";
 
-        String requestBody = "{\"nome\":\"Diego Pesquisa por Id Sucesso\"," +
-                "\"dataNascimento\":\"02/09/1977\"," +
+        String randomWord = generaPalavraRandomica(8);
+
+        String requestBody = "{\"nome\":\"" + randomWord + "\"," +
+                "\"data_nascimento\":\"02/09/1977\"," +
                 "\"sexo\":\"Masculino\"," +
-                "\"parentesco\":\"Filho\"}";
+                "\"codigo_cliente\":\"12345\"," +
+                "\"relacionamento\":\"Filho\"}";
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -385,11 +440,14 @@ class PessoaTests {
             requestEntity = new HttpEntity<>(headers);
             response = restTemplate.exchange(url, HttpMethod.GET, requestEntity, String.class);
 
-            String resp = "{\"id\":\"" + id + "\"," +
-                    "\"nome\":\"Diego Pesquisa por Id Sucesso\"," +
-                    "\"dataNascimento\":\"02/09/1977\"," +
+            System.out.println("resp: " + response);
+
+            String resp = "{\"id\":" + id + "," +
+                    "\"nome\":\"" + randomWord + "\"," +
+                    "\"data_nascimento\":\"02/09/1977\"," +
                     "\"sexo\":\"Masculino\"," +
-                    "\"parentesco\":\"Filho\"}";
+                    "\"codigo_cliente\":\"12345\"," +
+                    "\"relacionamento\":\"Filho\"}";
 
             Assert.assertTrue(response.getBody() != null && response.getBody().contains(resp));
 
@@ -409,8 +467,18 @@ class PessoaTests {
         Assert.assertTrue(response.getBody() != null && response.getBody().contains("{\"Erro\": \"Pessoa NÃO cadastrado.\"}"));
     }
 
+    private static String generaPalavraRandomica(int length) {
+        String allowedChars = "abcdefghijklmnopqrstuvwxyz"; // caracteres permitidos
+        Random random = new Random();
+        StringBuilder word = new StringBuilder();
 
+        for (int i = 0; i < length; i++) {
+            int randomIndex = random.nextInt(allowedChars.length());
+            char randomChar = allowedChars.charAt(randomIndex);
+            word.append(randomChar);
+        }
 
-
+        return word.toString();
+    }
 
 }
