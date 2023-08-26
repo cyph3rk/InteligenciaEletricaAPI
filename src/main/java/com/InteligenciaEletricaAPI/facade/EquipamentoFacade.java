@@ -73,7 +73,7 @@ public class EquipamentoFacade {
             EquipamentoDto equipamentoDto = new EquipamentoDto();
             equipamentoDto.setId(equipamento.getId());
             equipamentoDto.setNome(equipamento.getNome());
-            equipamentoDto.setModelo(equipamento.getPotencia());
+            equipamentoDto.setModelo(equipamento.getModelo());
             equipamentoDto.setPotencia(equipamento.getPotencia());
 
             EnderecoDto enderecoDto = new EnderecoDto();
