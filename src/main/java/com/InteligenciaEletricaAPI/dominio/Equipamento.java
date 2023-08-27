@@ -30,6 +30,7 @@ public class Equipamento {
     @JsonProperty
     private String potencia;
 
+    //todo: Implementar registro datahora de cadastro
 //    @Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE")
 //    private Instant dataDeCriacao;
 

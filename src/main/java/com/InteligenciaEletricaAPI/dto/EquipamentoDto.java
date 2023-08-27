@@ -14,7 +14,7 @@ public class EquipamentoDto {
     private String modelo;
     private String potencia;
 
-    EnderecoDto enderecoDto;
+    private EnderecoDto enderecoDto;
 
     public EquipamentoDto() {
 
@@ -33,14 +33,14 @@ public class EquipamentoDto {
         this.enderecoDto = enderecoDto;
     }
 
-    public Equipamento toEquipamento() {
-        return new Equipamento(nome, modelo, potencia, enderecoDto.toEndereco());
-    }
+//    public Equipamento toEquipamento() {
+//        return new Equipamento(nome, modelo, potencia, enderecoDto.toEndereco());
+//    }
 
-    public Equipamento toEquipamento(EquipamentoDto equipamentoDto, Endereco endereco) {
-        Equipamento equipamento = new Equipamento(nome, modelo, potencia, endereco);
-        return equipamento;
-    }
+//    public Equipamento toEquipamento(EquipamentoDto equipamentoDto, Endereco endereco) {
+//        Equipamento equipamento = new Equipamento(nome, modelo, potencia, endereco);
+//        return equipamento;
+//    }
 //
 //    public Equipamento toEquipamento(EquipamentoEnderecoDto equipamentoEnderecoDto) {
 //        Equipamento equipamento =  new Equipamento(nome, modelo, potencia);

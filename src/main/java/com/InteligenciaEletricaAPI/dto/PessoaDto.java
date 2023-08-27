@@ -15,6 +15,8 @@ public class PessoaDto {
     private String codigo_cliente;
     private String relacionamento;
 
+    private FamiliaDto familiaDto;
+
     public PessoaDto() {
 
     }
@@ -27,9 +29,14 @@ public class PessoaDto {
         this.relacionamento = relacionamento;
     }
 
-    public Pessoa toPessoa() {
-        Pessoa pessoa = new Pessoa(nome, data_nascimento, sexo, codigo_cliente, relacionamento);
-        pessoa.setId(id);
-        return pessoa;
+    public PessoaDto(String nome, String data_nascimento, String sexo, String codigo_cliente,
+                     String relacionamento, FamiliaDto familiaDto) {
+        this.nome = nome;
+        this.data_nascimento = data_nascimento;
+        this.sexo = sexo;
+        this.codigo_cliente = codigo_cliente;
+        this.relacionamento = relacionamento;
+        this.familiaDto = familiaDto;
     }
+
 }

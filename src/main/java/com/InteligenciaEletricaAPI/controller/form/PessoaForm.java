@@ -1,6 +1,7 @@
 package com.InteligenciaEletricaAPI.controller.form;
 
 import com.InteligenciaEletricaAPI.dominio.Pessoa;
+import com.InteligenciaEletricaAPI.dto.FamiliaDto;
 import com.InteligenciaEletricaAPI.dto.PessoaDto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotBlank;

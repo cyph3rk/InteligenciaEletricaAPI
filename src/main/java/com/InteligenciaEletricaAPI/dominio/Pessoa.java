@@ -35,6 +35,10 @@ public class Pessoa {
     @JsonProperty
     private String relacionamento;
 
+    @ManyToOne
+    @JoinColumn(name = "familia_id", nullable = false)
+    private Familia familia;
+
     public Pessoa(String nome, String data_nascimento, String sexo, String codigo_cliente, String relacionamento) {
         this.nome = nome;
         this.data_nascimento = data_nascimento;

@@ -1,8 +1,10 @@
 package com.InteligenciaEletricaAPI.controller;
 
 import com.InteligenciaEletricaAPI.controller.form.PessoaForm;
+import com.InteligenciaEletricaAPI.dto.FamiliaDto;
 import com.InteligenciaEletricaAPI.dto.PessoaDto;
 import com.InteligenciaEletricaAPI.facade.EnderecoFacade;
+import com.InteligenciaEletricaAPI.facade.FamiliaFacade;
 import com.InteligenciaEletricaAPI.facade.PessoaFacade;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -33,11 +35,14 @@ public class PessoaController {
     private final PessoaFacade pessoaFacade;
     private final EnderecoFacade enderecoFacade;
 
+    private final FamiliaFacade familiaFacade;
+
     @Autowired
-    public PessoaController(Validator validator, PessoaFacade pessoaFacade, EnderecoFacade enderecoFacade) {
+    public PessoaController(Validator validator, PessoaFacade pessoaFacade, EnderecoFacade enderecoFacade, FamiliaFacade familiaFacade) {
         this.validator = validator;
         this.pessoaFacade = pessoaFacade;
         this.enderecoFacade = enderecoFacade;
+        this.familiaFacade = familiaFacade;
     }
 
     private <T> Map<Path, String> validar(T form) {
@@ -47,21 +52,26 @@ public class PessoaController {
                 ConstraintViolation::getPropertyPath, ConstraintViolation::getMessage));
     }
 
-    @PostMapping
-    public ResponseEntity<Object> cadastraPessoa(@RequestBody PessoaForm pessoaForm) {
-
-        //Todo: Implementar regra de não existir mais de uma pessoa como cliente por
-        // Relacionamento em um ou mais endereços
+    @PostMapping("/{id}")
+    public ResponseEntity<Object> cadastraPessoa(@PathVariable Long id,
+                                                 @RequestBody PessoaForm pessoaForm) {
 
         logger.info("POST - Try : Cadastro de uma nova Pessoa: Nome: " + pessoaForm.getNome());
 
         Map<Path, String> violacoesToMap = validar(pessoaForm);
-
         if (!violacoesToMap.isEmpty()) {
             return ResponseEntity.badRequest().body(violacoesToMap);
         }
 
-        PessoaDto pessoaDTO = pessoaForm.toPessoaDto();
+        Optional<FamiliaDto> familiaDto = familiaFacade.buscarPorId(id);
+        boolean existeRegistro = familiaDto.isPresent();
+        if (!existeRegistro) {
+            return ResponseEntity.badRequest().body("{\"Erro\": \"Familia NÃO cadastrada.\"}");
+        }
+
+        PessoaDto pessoaDTO = new PessoaDto(pessoaForm.getNome(),
+                pessoaForm.getData_nascimento(), pessoaForm.getSexo(), pessoaForm.getCodigo_cliente(),
+                pessoaForm.getRelacionamento(), familiaDto.get());
         Long resp = pessoaFacade.salvar(pessoaDTO);
         if ( resp == -1) {
             return ResponseEntity.badRequest().body("{\"Erro\": \"Pessoa JÁ cadastrado.\"}");

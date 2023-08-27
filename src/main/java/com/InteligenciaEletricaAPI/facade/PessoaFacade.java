@@ -1,8 +1,11 @@
 package com.InteligenciaEletricaAPI.facade;
 
 import com.InteligenciaEletricaAPI.dominio.Pessoa;
+import com.InteligenciaEletricaAPI.dto.FamiliaDto;
 import com.InteligenciaEletricaAPI.dto.PessoaDto;
 import com.InteligenciaEletricaAPI.repositorio.IEnderecosRepositorio;
+import com.InteligenciaEletricaAPI.repositorio.IEquipamentosRepositorio;
+import com.InteligenciaEletricaAPI.repositorio.IFamiliasRepositorio;
 import com.InteligenciaEletricaAPI.repositorio.IPessoasRepositorio;
 
 import jakarta.persistence.EntityNotFoundException;
@@ -23,10 +26,14 @@ public class PessoaFacade {
     private final IPessoasRepositorio pessoasRepositorio;
     private final IEnderecosRepositorio enderecosRepositorio;
 
+    private final IFamiliasRepositorio familiasRepositorio;
+
     @Autowired
-    public PessoaFacade(IPessoasRepositorio pessoasRepositorio, IEnderecosRepositorio enderecosRepositorio) {
+    public PessoaFacade(IPessoasRepositorio pessoasRepositorio, IEnderecosRepositorio enderecosRepositorio,
+                        IFamiliasRepositorio familiasRepositorio) {
         this.pessoasRepositorio = pessoasRepositorio;
         this.enderecosRepositorio = enderecosRepositorio;
+        this.familiasRepositorio = familiasRepositorio;
     }
 
     public Long salvar(PessoaDto pessoaDto) {
@@ -35,12 +42,14 @@ public class PessoaFacade {
             return -1L;
         }
 
+        var familia = familiasRepositorio.getReferenceById(pessoaDto.getFamiliaDto().getId());
         Pessoa pessoa = new Pessoa();
         pessoa.setNome(pessoaDto.getNome());
         pessoa.setData_nascimento(pessoaDto.getData_nascimento());
         pessoa.setSexo(pessoaDto.getSexo());
         pessoa.setCodigo_cliente(pessoaDto.getCodigo_cliente());
         pessoa.setRelacionamento(pessoaDto.getRelacionamento());
+        pessoa.setFamilia(familia);
 
         pessoasRepositorio.save(pessoa);
 
@@ -66,6 +75,11 @@ public class PessoaFacade {
             pessoaDto.setSexo(pessoa.getSexo());
             pessoaDto.setCodigo_cliente(pessoa.getCodigo_cliente());
             pessoaDto.setRelacionamento(pessoa.getRelacionamento());
+
+            FamiliaDto familiaDto = new FamiliaDto();
+            familiaDto.setId(pessoa.getFamilia().getId());
+            familiaDto.setNome(pessoa.getFamilia().getNome());
+            pessoaDto.setFamiliaDto(familiaDto);
 
             return Optional.of(pessoaDto);
         } catch (EntityNotFoundException ex) {
@@ -99,6 +113,11 @@ public class PessoaFacade {
         result.setSexo(pessoa.getSexo());
         result.setCodigo_cliente(pessoa.getCodigo_cliente());
         result.setRelacionamento(pessoa.getRelacionamento());
+
+        FamiliaDto familiaDto = new FamiliaDto();
+        familiaDto.setId(pessoa.getFamilia().getId());
+        familiaDto.setNome(pessoa.getFamilia().getNome());
+        result.setFamiliaDto(familiaDto);
 
         return result;
     }
