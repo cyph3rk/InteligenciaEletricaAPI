@@ -5,6 +5,8 @@ import com.InteligenciaEletricaAPI.controller.form.PessoaForm;
 import com.InteligenciaEletricaAPI.dto.FamiliaDto;
 import com.InteligenciaEletricaAPI.dto.PessoaDto;
 import com.InteligenciaEletricaAPI.facade.FamiliaFacade;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Path;
 import jakarta.validation.Validator;
@@ -117,6 +119,21 @@ public class FamiliaController {
 
         familiaFacade.remove(id);
         return ResponseEntity.ok("{\"Mensagem\": \"Familia DELETADA com sucesso.\"}");
+    }
+
+    @GetMapping
+    public ResponseEntity<String> getAllFamilias() {
+        logger.info("GET - Pedido de todas as Familias cadastradas");
+
+        String json = "Erro Inesperado";
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            json = objectMapper.writeValueAsString(familiaFacade.getAll());
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+
+        return ResponseEntity.ok(String.format(json));
     }
 
 }

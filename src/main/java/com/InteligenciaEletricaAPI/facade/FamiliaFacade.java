@@ -88,8 +88,14 @@ public class FamiliaFacade {
         return result;
     }
 
-
     public void remove(Long id) {
         familiasRepositorio.deleteById(id);
+    }
+
+    public List<FamiliaDto> getAll() {
+        return familiasRepositorio
+                .findAll()
+                .stream()
+                .map(this::converter).collect(Collectors.toList());
     }
 }
