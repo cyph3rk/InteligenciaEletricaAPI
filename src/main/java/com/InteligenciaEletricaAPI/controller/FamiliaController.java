@@ -105,4 +105,18 @@ public class FamiliaController {
         return ResponseEntity.status(HttpStatus.OK).body(pessoaDto);
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Object> deleteFamiliaPorId(@PathVariable Long id) {
+
+        Optional<FamiliaDto> familiaDto = familiaFacade.buscarPorId(id);
+
+        boolean existeRegistro = familiaDto.isPresent();
+        if (!existeRegistro) {
+            return ResponseEntity.badRequest().body("{\"Erro\": \"Familia NÃO cadastrada.\"}");
+        }
+
+        familiaFacade.remove(id);
+        return ResponseEntity.ok("{\"Mensagem\": \"Familia DELETADA com sucesso.\"}");
+    }
+
 }

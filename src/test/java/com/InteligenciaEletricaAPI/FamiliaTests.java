@@ -177,6 +177,39 @@ class FamiliaTests {
 
     }
 
+    @Test
+    public void testeDeletaFamiliaSucesso() {
+
+        String randomWord = generaPalavraRandomica(8);
+
+        String id = cadastrandoFamiliao(randomWord);
+        Assert.assertNotEquals("Falha", id);
+
+        String url = "http://localhost:" + port + "/familia/" + id;
+
+        HttpHeaders headers = new HttpHeaders();
+        HttpEntity<String> requestEntity = new HttpEntity<>(headers);
+        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.DELETE, requestEntity, String.class);
+        Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
+        Assert.assertTrue(response.getBody() != null && response.getBody()
+                .contains("{\"Mensagem\": \"Familia DELETADA com sucesso.\"}"));
+
+    }
+
+    @Test
+    public void testeDeletaFamiliaFalha() {
+
+        String url = "http://localhost:" + port + "/familia/999";
+
+        HttpHeaders headers = new HttpHeaders();
+        HttpEntity<String> requestEntity = new HttpEntity<>(headers);
+        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.DELETE, requestEntity, String.class);
+        Assert.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        Assert.assertTrue(response.getBody() != null && response.getBody()
+                .contains("{\"Erro\": \"Familia NÃO cadastrada.\"}"));
+
+    }
+
     private static String generaPalavraRandomica(int length) {
         String allowedChars = "abcdefghijklmnopqrstuvwxyz"; // caracteres permitidos
         Random random = new Random();

@@ -89,4 +89,7 @@ public class FamiliaFacade {
     }
 
 
+    public void remove(Long id) {
+        familiasRepositorio.deleteById(id);
+    }
 }
