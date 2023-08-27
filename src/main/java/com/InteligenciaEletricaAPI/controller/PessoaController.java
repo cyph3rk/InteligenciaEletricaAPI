@@ -131,6 +131,34 @@ public class PessoaController {
         return ResponseEntity.status(HttpStatus.OK).body(pessoaDtos);
     }
 
+    @GetMapping("/listafamilia/nome/{nome}")
+    public ResponseEntity<Object> listaFamiliaPorNome(@PathVariable String nome) {
+
+        List<PessoaDto> pessoaDtos = pessoaFacade.listaFamiliaPorNome(nome);
+
+        if (pessoaDtos.size() == 0) {
+            return ResponseEntity.badRequest().body("{\"Erro\": \"Pessoa NÃO cadastrado.\"}");
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(pessoaDtos);
+    }
+
+    @GetMapping("/listafamilia/id/{id}")
+    public ResponseEntity<String> listaFamiliaPorId(@PathVariable Long id) {
+        logger.info("GET - Pedido de todas as pessoas cadadastradas por id da Familia");
+
+        String json = "Erro Inesperado";
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            json = objectMapper.writeValueAsString(pessoaFacade.listaFamiliaPorId(id));
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+
+        return ResponseEntity.ok(String.format(json));
+    }
+
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deletePessoaPorId(@PathVariable Long id) {
 

@@ -63,6 +63,20 @@ public class PessoaFacade {
                 .map(this::converter).collect(Collectors.toList());
     }
 
+    public List<PessoaDto> listaFamiliaPorNome(String nome) {
+        List<Pessoa> listaPessoas = pessoasRepositorio.buscaFamiliaPorNome(nome);
+
+        return listaPessoas.stream()
+                .map(this::converter).collect(Collectors.toList());
+    }
+
+    public List<PessoaDto> listaFamiliaPorId(long id) {
+        List<Pessoa> listaPessoas = pessoasRepositorio.buscaFamiliaPorId(id);
+
+        return listaPessoas.stream()
+                .map(this::converter).collect(Collectors.toList());
+    }
+
     public Optional<PessoaDto> buscarPorId(Long id) {
 
         try {
