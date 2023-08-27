@@ -277,7 +277,6 @@ class PessoaTests {
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
-
     }
 
     @Test

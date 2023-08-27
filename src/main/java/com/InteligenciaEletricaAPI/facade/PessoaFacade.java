@@ -20,13 +20,13 @@ public class PessoaFacade {
 
     private static final Logger logger = LoggerFactory.getLogger(PessoaFacade.class);
 
-    private final IPessoasRepositorio repositorioPessoas;
-    private final IEnderecosRepositorio repositorioEnderecos;
+    private final IPessoasRepositorio pessoasRepositorio;
+    private final IEnderecosRepositorio enderecosRepositorio;
 
     @Autowired
-    public PessoaFacade(IPessoasRepositorio repositorioPessoas, IEnderecosRepositorio repositorioEnderecos) {
-        this.repositorioPessoas = repositorioPessoas;
-        this.repositorioEnderecos = repositorioEnderecos;
+    public PessoaFacade(IPessoasRepositorio pessoasRepositorio, IEnderecosRepositorio enderecosRepositorio) {
+        this.pessoasRepositorio = pessoasRepositorio;
+        this.enderecosRepositorio = enderecosRepositorio;
     }
 
     public Long salvar(PessoaDto pessoaDto) {
@@ -42,13 +42,13 @@ public class PessoaFacade {
         pessoa.setCodigo_cliente(pessoaDto.getCodigo_cliente());
         pessoa.setRelacionamento(pessoaDto.getRelacionamento());
 
-        repositorioPessoas.save(pessoa);
+        pessoasRepositorio.save(pessoa);
 
         return pessoa.getId();
     }
 
     public List<PessoaDto> buscarPorNome(String nome) {
-        List<Pessoa> listaPessoas = repositorioPessoas.findByNome(nome);
+        List<Pessoa> listaPessoas = pessoasRepositorio.findByNome(nome);
 
         return listaPessoas.stream()
                 .map(this::converter).collect(Collectors.toList());
@@ -57,7 +57,7 @@ public class PessoaFacade {
     public Optional<PessoaDto> buscarPorId(Long id) {
 
         try {
-            Pessoa pessoa = repositorioPessoas.getReferenceById(id);
+            Pessoa pessoa = pessoasRepositorio.getReferenceById(id);
 
             PessoaDto pessoaDto = new PessoaDto();
             pessoaDto.setId(pessoa.getId());
@@ -76,19 +76,19 @@ public class PessoaFacade {
 
     public void remove(Long id) {
         //Todo: Implementar a verificação se cadastro existe antes de deletar
-        repositorioPessoas.deleteById(id);
+        pessoasRepositorio.deleteById(id);
     }
 
     //TODO: Resolver o problema de alterar o nome para um que ja existe quebrando a regra de duplicidade
     public void altera(Long id, PessoaDto pessoaDto_New) {
-        Pessoa pessoaDB = repositorioPessoas.getReferenceById(id);
+        Pessoa pessoaDB = pessoasRepositorio.getReferenceById(id);
         pessoaDB.setNome(pessoaDto_New.getNome());
         pessoaDB.setData_nascimento(pessoaDto_New.getData_nascimento());
         pessoaDB.setSexo(pessoaDto_New.getSexo());
         pessoaDB.setCodigo_cliente(pessoaDto_New.getCodigo_cliente());
         pessoaDB.setRelacionamento(pessoaDto_New.getRelacionamento());
 
-        repositorioPessoas.save(pessoaDB);
+        pessoasRepositorio.save(pessoaDB);
     }
 
     private PessoaDto converter (Pessoa pessoa) {
@@ -104,7 +104,7 @@ public class PessoaFacade {
     }
 
     public List<PessoaDto> getAll() {
-        return repositorioPessoas
+        return pessoasRepositorio
                 .findAll()
                 .stream()
                 .map(this::converter).collect(Collectors.toList());
