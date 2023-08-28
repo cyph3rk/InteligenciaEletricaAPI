@@ -25,7 +25,7 @@ class FamiliaTests {
     private TestRestTemplate restTemplate;
 
     @Test
-    public void testeCadastrandoFamiliaSucesso() {
+    public void cadastrandoFamilia_SucessoTest() {
 
         String randomWord = generaPalavraRandomica(8);
 
@@ -35,7 +35,7 @@ class FamiliaTests {
     }
 
     @Test
-    public void testeTentativaCadastrandoFamiliaDuplicado() {
+    public void tentativaCadastrandoFamiliaDuplicado_Test() {
 
         String randomWord = generaPalavraRandomica(8);
 
@@ -60,7 +60,7 @@ class FamiliaTests {
     }
 
     @Test
-    public void testeAlterandoFamiliaSucesso() {
+    public void alterandoFamilia_SucessoTest() {
 
         String randomWord = generaPalavraRandomica(8);
 
@@ -89,7 +89,7 @@ class FamiliaTests {
     }
 
     @Test
-    public void testeAlterandoFamiliaJaExiste() {
+    public void alterandoFamiliaJaExiste_SucessoTest() {
 
         String randomWord = generaPalavraRandomica(8);
 
@@ -108,7 +108,7 @@ class FamiliaTests {
     }
 
     @Test
-    public void testePesquisaFamiliaPorNomeSucesso() {
+    public void pesquisaFamiliaPorNome_SucessoTest() {
 
         String randomWord = generaPalavraRandomica(8);
 
@@ -128,7 +128,7 @@ class FamiliaTests {
     }
 
     @Test
-    public void testePesquisaFamiliaPorNomeFalha() {
+    public void pesquisaFamiliaPorNome_FalhaTest() {
 
         String url = "http://localhost:" + port + "/familia/nome/qualquerCoisa";
 
@@ -143,7 +143,7 @@ class FamiliaTests {
     }
 
     @Test
-    public void testePesquisaFamiliaPorIdSucesso() {
+    public void pesquisaFamiliaPorId_SucessoTest() {
 
         String randomWord = generaPalavraRandomica(8);
 
@@ -163,7 +163,7 @@ class FamiliaTests {
     }
 
     @Test
-    public void testePesquisaFamiliaPorIdFalha() {
+    public void pesquisaFamiliaPorId_FalhaTest() {
 
         String url = "http://localhost:" + port + "/familia/9966";
 
@@ -178,7 +178,7 @@ class FamiliaTests {
     }
 
     @Test
-    public void testeDeletaFamiliaSucesso() {
+    public void deletaFamilia_SucessoTest() {
 
         String randomWord = generaPalavraRandomica(8);
 
@@ -197,7 +197,7 @@ class FamiliaTests {
     }
 
     @Test
-    public void testeDeletaFamiliaFalha() {
+    public void deletaFamilia_FalhaTest() {
 
         String url = "http://localhost:" + port + "/familia/999";
 

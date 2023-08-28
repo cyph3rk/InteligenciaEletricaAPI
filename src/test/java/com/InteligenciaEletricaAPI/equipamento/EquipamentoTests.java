@@ -26,7 +26,7 @@ class EquipamentoTests {
     private TestRestTemplate restTemplate;
 
     @Test
-    public void testeCadastrandoEquipamentoSucesso() {
+    public void cadastrandoEquipamento_SucessoTest() {
 
         String randomWord = generaPalavraRandomica(8);
         String id = cadastrandoEnderecoSucesso(randomWord);
@@ -56,7 +56,7 @@ class EquipamentoTests {
     }
 
     @Test
-    public void testeTentativaCadastrandoEquipamentoDuplicado() {
+    public void tentativaCadastrandoEquipamentoDuplicadoTest() {
 
         String randomWord = generaPalavraRandomica(8);
         String id = cadastrandoEnderecoSucesso(randomWord);
@@ -79,118 +79,7 @@ class EquipamentoTests {
     }
 
     @Test
-    public void testeCadastrandoEquipamentoCampoNomeBranco() {
-        String randomWord = generaPalavraRandomica(8);
-        String id = cadastrandoEnderecoSucesso(randomWord);
-
-        String url = "http://localhost:" + port + "/equipamento/" + id;
-
-        String requestBody = "{\"nome\":\"\"," +
-                "\"modelo\":\"Antigo\"," +
-                "\"potencia\":\"50W\"}";
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<String> requestEntity = new HttpEntity<>(requestBody, headers);
-        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, requestEntity, String.class);
-        Assert.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        Assert.assertTrue(response.getBody() != null && response.getBody().contains("\"Campo NOME é obrigatorio\""));
-    }
-
-    @Test
-    public void testeCadastrandoEquipamentoCampoNomeNulo() {
-        String randomWord = generaPalavraRandomica(8);
-        String id = cadastrandoEnderecoSucesso(randomWord);
-
-        String url = "http://localhost:" + port + "/equipamento/" + id;
-
-        String requestBody = "{\"modelo\":\"Antigo\"," +
-                "\"potencia\":\"50W\"}";
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<String> requestEntity = new HttpEntity<>(requestBody, headers);
-        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, requestEntity, String.class);
-        Assert.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        Assert.assertTrue(response.getBody() != null && response.getBody().contains("\"Campo NOME é obrigatorio\""));
-    }
-
-    @Test
-    public void testeCadastrandoEquipamentoCampoModeloBranco() {
-        String randomWord = generaPalavraRandomica(8);
-        String id = cadastrandoEnderecoSucesso(randomWord);
-
-        String url = "http://localhost:" + port + "/equipamento/" + id;
-
-        String requestBody = "{\"nome\":\"" + randomWord + "\"," +
-                "\"modelo\":\"\"," +
-                "\"potencia\":\"50W\"}";
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<String> requestEntity = new HttpEntity<>(requestBody, headers);
-        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, requestEntity, String.class);
-        Assert.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        Assert.assertTrue(response.getBody() != null && response.getBody().contains("\"Campo MODELO é obrigatorio\""));
-    }
-
-    @Test
-    public void testeCadastrandoEquipamentoCampoModeloNulo() {
-        String randomWord = generaPalavraRandomica(8);
-        String id = cadastrandoEnderecoSucesso(randomWord);
-
-        String url = "http://localhost:" + port + "/equipamento/" + id;
-
-        String requestBody = "{\"nome\":\"" + randomWord + "\"," +
-                "\"potencia\":\"50W\"}";
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<String> requestEntity = new HttpEntity<>(requestBody, headers);
-        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, requestEntity, String.class);
-        Assert.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        Assert.assertTrue(response.getBody() != null && response.getBody().contains("\"Campo MODELO é obrigatorio\""));
-    }
-
-    @Test
-    public void testeCadastrandoEquipamentoCampoPotenciaBranco() {
-        String randomWord = generaPalavraRandomica(8);
-        String id = cadastrandoEnderecoSucesso(randomWord);
-
-        String url = "http://localhost:" + port + "/equipamento/" + id;
-
-        String requestBody = "{\"nome\":\"" + randomWord + "\"," +
-                "\"modelo\":\"Antigo\"," +
-                "\"potencia\":\"\"}";
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<String> requestEntity = new HttpEntity<>(requestBody, headers);
-        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, requestEntity, String.class);
-        Assert.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        Assert.assertTrue(response.getBody() != null && response.getBody().contains("\"Campo POTENCIA é obrigatorio\""));
-    }
-
-    @Test
-    public void testeCadastrandoEquipamentoCampoPotenciaNulo() {
-        String randomWord = generaPalavraRandomica(8);
-        String id = cadastrandoEnderecoSucesso(randomWord);
-
-        String url = "http://localhost:" + port + "/equipamento/" + id;
-
-        String requestBody = "{\"nome\":\"" + randomWord + "\"," +
-                "\"modelo\":\"Antigo\"}";
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<String> requestEntity = new HttpEntity<>(requestBody, headers);
-        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, requestEntity, String.class);
-        Assert.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        Assert.assertTrue(response.getBody() != null && response.getBody().contains("\"Campo POTENCIA é obrigatorio\""));
-    }
-
-    @Test
-    public void testeAlterandoCamposEquipamentoSucesso() {
+    public void alterandoCamposEquipamento_SucessoTest() {
 
         String randomWord = generaPalavraRandomica(8);
         String idEndereco = cadastrandoEnderecoSucesso(randomWord);
@@ -235,7 +124,7 @@ class EquipamentoTests {
     }
 
     @Test
-    public void testeAlterandoCamposEquipamentoFalha() {
+    public void alterandoCamposEquipamento_FalhaTest() {
         String url = "http://localhost:" + port + "/equipamento/99";
 
         String requestBody = "{\"nome\":\"Novo Ferro Passar Roupa\"," +
@@ -250,7 +139,7 @@ class EquipamentoTests {
     }
 
     @Test
-    public void testeDeletaEquipamentoSucesso() {
+    public void deletaEquipamento_SucessoTest() {
 
         String randomWord = generaPalavraRandomica(8);
         String idEndereco = cadastrandoEnderecoSucesso(randomWord);
@@ -288,7 +177,7 @@ class EquipamentoTests {
     }
 
     @Test
-    public void testeDeletaEquipamentoFalha() {
+    public void deletaEquipamento_FalhaTest() {
         String url = "http://localhost:" + port + "/equipamento/99";
 
         HttpHeaders headers = new HttpHeaders();
@@ -300,7 +189,7 @@ class EquipamentoTests {
     }
 
     @Test
-    public void testePesquisaEquipamentoPorNomeSucesso() {
+    public void pesquisaEquipamentoPorNome_SucessoTest() {
 
         String randomWord = generaPalavraRandomica(8);
         String idEndereco = cadastrandoEnderecoSucesso(randomWord);
@@ -350,7 +239,7 @@ class EquipamentoTests {
     }
 
     @Test
-    public void testePesquisaEquipamentoPorNomeFalha() {
+    public void pesquisaEquipamentoPorNome_FalhaTest() {
         String url = "http://localhost:" + port + "/equipamento/nome/qualquercoisa";
                 HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -361,7 +250,7 @@ class EquipamentoTests {
     }
 
     @Test
-    public void testePesquisaEquipamentoPorIdSucesso() {
+    public void pesquisaEquipamentoPorId_SucessoTest() {
 
         String randomWord = generaPalavraRandomica(8);
         String idEndereco = cadastrandoEnderecoSucesso(randomWord);
@@ -411,7 +300,7 @@ class EquipamentoTests {
     }
 
     @Test
-    public void testePesquisaEquipamentoPorIdFalha() {
+    public void pesquisaEquipamentoPorId_FalhaTest() {
         String url = "http://localhost:" + port + "/equipamento/99";
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);

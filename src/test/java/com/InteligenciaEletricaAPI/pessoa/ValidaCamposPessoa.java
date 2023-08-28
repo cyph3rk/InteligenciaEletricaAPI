@@ -26,7 +26,7 @@ class ValidaCamposPessoa {
     private TestRestTemplate restTemplate;
 
     @Test
-    public void testeCadastrandoPessoaCampoNomeBranco() {
+    public void campoNomeBrancoTest() {
 
         String randomWord = generaPalavraRandomica(8);
 
@@ -50,7 +50,7 @@ class ValidaCamposPessoa {
     }
 
     @Test
-    public void testeCadastrandoPessoaCampoNomeNulo() {
+    public void campoNomeNuloTest() {
 
         String randomWord = generaPalavraRandomica(8);
 
@@ -74,7 +74,7 @@ class ValidaCamposPessoa {
     }
 
     @Test
-    public void testeCadastrandoPessoaCampoDataNascimentoBranco() {
+    public void campoDataNascimentoBrancoTest() {
 
         String randomWord = generaPalavraRandomica(8);
 
@@ -98,7 +98,7 @@ class ValidaCamposPessoa {
     }
 
     @Test
-    public void testeCadastrandoPessoaCampoDataNascimentoNulo() {
+    public void campoDataNascimentoNuloTest() {
 
         String randomWord = generaPalavraRandomica(8);
 
@@ -122,7 +122,7 @@ class ValidaCamposPessoa {
     }
 
     @Test
-    public void testeCadastrandoPessoaCampoSexoBranco() {
+    public void campoSexoBrancoTest() {
 
         String randomWord = generaPalavraRandomica(8);
 
@@ -146,7 +146,7 @@ class ValidaCamposPessoa {
     }
 
     @Test
-    public void testeCadastrandoPessoaCampoSexoNulo() {
+    public void campoSexoNuloTest() {
 
         String randomWord = generaPalavraRandomica(8);
 
@@ -170,7 +170,7 @@ class ValidaCamposPessoa {
     }
 
     @Test
-    public void testeCadastrandoPessoaCampoRelacionamentoBranco() {
+    public void campoRelacionamentoBrancoTest() {
 
         String randomWord = generaPalavraRandomica(8);
 
@@ -194,7 +194,7 @@ class ValidaCamposPessoa {
     }
 
     @Test
-    public void testeCadastrandoPessoaCampoRelacionamentoNulo() {
+    public void campoRelacionamentoNuloTest() {
 
         String randomWord = generaPalavraRandomica(8);
 
