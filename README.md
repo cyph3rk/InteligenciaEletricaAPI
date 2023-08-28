@@ -41,156 +41,72 @@
 <br>
 
 
-## :page_with_curl: Comandos cUrl para Testes Manuais
+## Subindo Ambiente Desenvolvimento
 
-<br>
+Na pasta AmbienteDev subis docker-compose
 
-## Comandos para: Endereços
-
-### Cadastro Endereço
+Esse comando só é necessário uma vez, ou depois de alguma alteração no docker-compose
 ```shell
-curl -i -X POST http://localhost:8080/endereco  -H "Content-Type:application/json" -d '{"rua": "Rua Cadastro novo Endereco", "numero": "130", "bairro": "Bela Vista I", "cidade": "São José", "estado": "Santa Catarina"}'
+# docker compose build
 ```
 
-### Altera Endereço
+Sobe um docker com postgres e outro com PgAdmin
 ```shell
-curl -i -X PUT http://localhost:8080/endereco/1  -H "Content-Type:application/json" -d '{"rua": "Nova Rua", "numero": "200", "bairro": "Novo Bairro", "cidade": "Nova Cidade", "estado": "Novo Estado"}'
+# docker compose up
 ```
 
-### Pega Todos os Endereços Cadastrados
+Para e desaloca os containers
 ```shell
-curl -i -X GET http://localhost:8080/endereco
+# docker compose down
 ```
 
-### Pega Endereços Por Id
-```shell
-curl -i -X GET http://localhost:8080/endereco/1
-```
-
-### Pega Endereco Por Rua
-```shell
-curl -i -X GET http://localhost:8080/endereco/rua/Nova%20Rua
-```
-
-### Deleta Endereco Por Id
-```shell
-curl -i -X DELETE http://localhost:8080/endereco/1
-```
 
 <br>
 
 *******
-
-<br>
-
-## Comandos para: Equipamentos
-
-### Cadastra Equipamento
-```shell
-curl -i -X POST http://localhost:8080/equipamento  -H "Content-Type:application/json" -d '{"nome": "Novo Eletro 1","modelo": "Antigo 1","potencia": "50W"}'
-```
-
-### Altera Equipamento
-```shell
-curl -i -X PUT http://localhost:8080/equipamento/1  -H "Content-Type:application/json" -d '{"nome": "Eletro 1 Altrado","modelo": "Novo","potencia": "230W"}'
-```
-
-### Pega Todos os Equipamentos Cadastrados
-```shell
-curl -i -X GET http://localhost:8080/equipamento
-```
-
-### Pega Equipamentos Por Id
-```shell
-curl -i -X GET http://localhost:8080/equipamento/1
-```
-
-### Pega Equipamentos Por Nome
-```shell
-curl -i -X GET http://localhost:8080/equipamento/nome/Eletro%201%20Altrado
-```
-
-### Deleta Equipamento Por Id
-```shell
-curl -i -X DELETE http://localhost:8080/equipamento/1
-```
-
-<br>
-
-*******
-
-<br>
-
-## Comandos para: Pessoas
-
-### Cadastra Pessoa
-```shell
-curl -i -X POST http://localhost:8080/pessoa  -H "Content-Type:application/json" -d '{"nome": "Nova Pessoa","dataNascimento": "01/01/2000","sexo": "masculino", "parentesco": "Filho"}'
-```
-
-### Altera Pessoa
-```shell
-curl -i -X PUT http://localhost:8080/pessoa/1  -H "Content-Type:application/json" -d '{"nome": "Nome Alterado","dataNascimento": "02/02/2002","sexo": "feminino", "parentesco": "Filha"}'
-```
-
-### Pega Todas as Pessoas Cadastradas
-```shell
-curl -i -X GET http://localhost:8080/pessoa
-```
-
-### Pega Pessoas Por Id
-```shell
-curl -i -X GET http://localhost:8080/pessoa/1
-```
-
-### Pega Pessoa Por Nome
-```shell
-curl -i -X GET http://localhost:8080/pessoa/nome/Nome%20Alterado
-```
-
-### Deleta Pessoa Por Id
-```shell
-curl -i -X DELETE http://localhost:8080/pessoa/1
-```
-
-<br>
-
-*******
-
-<br>
 
 ## Ressumo de EndPoints
+<br>
 
-## Comandos para: Endereços
+### Comandos para: Endereços
 
-### Cadastro Endereço
+#### &emsp;&emsp; Cadastro Endereço
 ```shell
 POST http://localhost:8080/endereco
+{
+    "rua": "Rua Sao Jose, 130",
+    "numero": "200",
+    "bairro": "Boa Vista",
+    "cidade": "Jalapeno",
+    "estado": "Santa Catarina"
+}
 ```
-
-### Altera Endereço
-```shell
-PUT http://localhost:8080/endereco/1
-```
-
-### Pega Todos os Endereços Cadastrados
+#### &emsp;&emsp; Pega Todos os Endereço
 ```shell
 GET http://localhost:8080/endereco
 ```
-
-### Pega Endereços Por Id
+#### &emsp;&emsp; Pega Endereço Por Id
 ```shell
-GET http://localhost:8080/endereco/1
+GET http://localhost:8080/endereco/{id}
 ```
-
-### Pega Endereco Por Rua
+#### &emsp;&emsp; Pega Endereço Por Rua
 ```shell
-GET http://localhost:8080/endereco/rua/Nova%20Rua
+GET http://localhost:8080/endereco/rua/{rua}
 ```
-
-### Deleta Endereco Por Id
+#### &emsp;&emsp; Altera Endereço Por Id
 ```shell
-DELETE http://localhost:8080/endereco/1
+PUT http://localhost:8080/endereco/{id}
+{
+    "rua": "Rua dos acorianos",
+    "numero": "130",
+    "bairro": "Bela Vista I",
+    "cidade": "São José",
+    "estado": "Santa Catarina"
+}
+```
+#### &emsp;&emsp; Deleta Endereço Por Id
+```shell
+DELETE http://localhost:8080/endereco/{id}
 ```
 
 <br>
@@ -199,36 +115,41 @@ DELETE http://localhost:8080/endereco/1
 
 <br>
 
-## Comandos para: Equipamentos
+### Comandos para: Equipamentos
 
-### Cadastra Equipamento
+#### &emsp;&emsp; Cadastra Equipamento
 ```shell
-POST http://localhost:8080/equipamento
+POST http://localhost:8080/equipamento/{id}
 ```
 
-### Altera Equipamento
-```shell
-PUT http://localhost:8080/equipamento/1
-```
-
-### Pega Todos os Equipamentos Cadastrados
+#### &emsp;&emsp; Pega Todos os Equipamentos
 ```shell
 GET http://localhost:8080/equipamento
 ```
 
-### Pega Equipamentos Por Id
+#### &emsp;&emsp; Pega Equipamentos Por Id
 ```shell
-GET http://localhost:8080/equipamento/1
+GET http://localhost:8080/equipamento/{id}
 ```
 
-### Pega Equipamentos Por Nome
+#### &emsp;&emsp; Pega Equipamentos Por Nome
 ```shell
-GET http://localhost:8080/equipamento/nome/Eletro%201%20Altrado
+GET http://localhost:8080/equipamento/nome/{nome}
 ```
 
-### Deleta Equipamento Por Id
+#### &emsp;&emsp; Altera Equipamento Por Id
 ```shell
-DELETE http://localhost:8080/equipamento/1
+PUT http://localhost:8080/equipamento/1
+{
+    "nome": "Ferro passar 1234",
+    "modelo": "Andtigo",
+    "potencia": "50w"
+}
+```
+
+#### &emsp;&emsp; Deleta Equipamento Por Id
+```shell
+DELETE http://localhost:8080/equipamento/{id}
 ```
 
 <br>
@@ -237,36 +158,64 @@ DELETE http://localhost:8080/equipamento/1
 
 <br>
 
-## Comandos para: Pessoas
+### Comandos para: Pessoas
 
-### Cadastra Pessoa
+#### &emsp;&emsp; Cadastra Pessoa
 ```shell
-POST http://localhost:8080/pessoa
+POST http://localhost:8080/pessoa/{id_familia}
 ```
 
-### Altera Pessoa
+#### &emsp;&emsp; Altera Pessoa
 ```shell
 PUT http://localhost:8080/pessoa/1
 ```
 
-### Pega Todas as Pessoas Cadastradas
+#### &emsp;&emsp; Pega Todas as Pessoas Cadastradas
 ```shell
 GET http://localhost:8080/pessoa
 ```
 
-### Pega Pessoas Por Id
+#### &emsp;&emsp; Pega Pessoas Por Id
 ```shell
-GET http://localhost:8080/pessoa/1
+GET http://localhost:8080/pessoa/{id}
 ```
 
-### Pega Pessoa Por Nome
+#### &emsp;&emsp; Pega Pessoa Por Nome
 ```shell
-GET http://localhost:8080/pessoa/nome/Nome%20Alterado
+GET http://localhost:8080/pessoa/nome/{nome}
 ```
 
-### Deleta Pessoa Por Id
+#### &emsp;&emsp; Altera Pessoa Por Id
 ```shell
-DELETE http://localhost:8080/pessoa/1
+PUT http://localhost:8080/pessoa/nome/{id}
+{
+    "nome": "Diego Vargas Alterado",
+    "data_nascimento": "01/01/2000",
+    "sexo": "masculino", 
+    "codigo_cliente": "Filho",
+    "relacionamento": "Filho"
+}
+```
+
+#### &emsp;&emsp; Deleta Pessoa Por Id
+```shell
+DELETE http://localhost:8080/pessoa/{id}
+```
+
+#### &emsp;&emsp; Associa Pessoas a Endereços
+```shell
+POST http://localhost:8080/pessoa/{id_pessoa}/cadastraEnderecos
+[2, 4, 6]
+```
+
+#### &emsp;&emsp; Lista Pessoas Por Id da Familia 
+```shell
+GET http://localhost:8080/pessoa/listafamilia/{id}
+```
+
+#### &emsp;&emsp; Lista Pessoas Por Nome da Familia
+```shell
+GET http://localhost:8080/pessoa/listafamilia/{nome_familia}
 ```
 
 <br>
@@ -275,7 +224,43 @@ DELETE http://localhost:8080/pessoa/1
 
 <br>
 
+### Comandos para: Equipamentos
 
+#### &emsp;&emsp; Cadastra Familia
+```shell
+POST http://localhost:8080/familia/{nome}
+```
+
+#### &emsp;&emsp; Altera Familia Por Id
+```shell
+PUT http://localhost:8080/familia/{id}/{nome}
+```
+
+#### &emsp;&emsp; Pega Familia Por Nome
+```shell
+GET http://localhost:8080/familia/nome/{nome}
+```
+
+#### &emsp;&emsp; Pega Familia Por Id
+```shell
+GET http://localhost:8080/familia/{id}
+```
+
+#### &emsp;&emsp; Deleta Familia Por Id
+```shell
+DELETE http://localhost:8080/familia/{id}
+```
+
+#### &emsp;&emsp; Pega Todas as Familias
+```shell
+GET http://localhost:8080/familia
+```
+
+<br>
+
+*******
+
+<br>
 
 
 ## JSONs Exemplo
@@ -299,8 +284,9 @@ DELETE http://localhost:8080/pessoa/1
 ### Json Pessoa
     {
         "nome": "Nome do segundo",
-        "dataNascimento": "01/01/2000",
+        "data_nascimento": "01/01/2000",
         "sexo": "masculino",
-        "parentesco": "Filho"
+        "codigo_cliente": "12345",
+        "relacionamento": "Filho"
     }
 
