@@ -110,7 +110,7 @@ public class EquipamentoController {
     }
 
     @GetMapping("/nome/{nome}")
-    public ResponseEntity<Object> getEquipamentoPorNomed(@PathVariable String nome) {
+    public ResponseEntity<Object> getEquipamentoPorNome(@PathVariable String nome) {
 
         List<EquipamentoDto> equipamentoDto = equipamentoFacade.buscarPorNome(nome);
 
