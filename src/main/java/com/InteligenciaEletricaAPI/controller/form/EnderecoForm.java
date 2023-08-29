@@ -1,6 +1,7 @@
 package com.InteligenciaEletricaAPI.controller.form;
 
 import com.InteligenciaEletricaAPI.dominio.Endereco;
+import com.InteligenciaEletricaAPI.dto.EnderecoDto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
@@ -30,7 +31,7 @@ public class EnderecoForm {
     @NotBlank(message = "Campo ESTADO é obrigatorio")
     private String estado;
 
-    public Endereco toEndereco() {
-        return new Endereco(rua, numero, bairro, cidade, estado);
+    public EnderecoDto toEnderecoDto() {
+        return new EnderecoDto(rua, numero, bairro, cidade, estado);
     }
 }

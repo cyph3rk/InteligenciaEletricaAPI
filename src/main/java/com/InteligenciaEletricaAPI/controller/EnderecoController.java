@@ -2,8 +2,9 @@ package com.InteligenciaEletricaAPI.controller;
 
 
 import com.InteligenciaEletricaAPI.controller.form.EnderecoForm;
-import com.InteligenciaEletricaAPI.dominio.Endereco;
-import com.InteligenciaEletricaAPI.repositorio.RepositorioEnderecos;
+import com.InteligenciaEletricaAPI.dto.EnderecoDto;
+import com.InteligenciaEletricaAPI.facade.EnderecoFacade;
+import com.InteligenciaEletricaAPI.repositorio.IEnderecosRepositorio;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.validation.ConstraintViolation;
@@ -16,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -27,14 +29,17 @@ public class EnderecoController {
 
     private static final Logger logger = LoggerFactory.getLogger(EnderecoController.class);
 
-    private final RepositorioEnderecos repositorioEnderecos;
+    private final IEnderecosRepositorio repositorioEnderecos;
 
     private final Validator validator;
 
+    private final EnderecoFacade enderecoFacade;
+
     @Autowired
-    public EnderecoController(RepositorioEnderecos repositorioEnderecos, Validator validator) {
+    public EnderecoController(IEnderecosRepositorio repositorioEnderecos, Validator validator, EnderecoFacade enderecoFacade) {
         this.repositorioEnderecos = repositorioEnderecos;
         this.validator = validator;
+        this.enderecoFacade = enderecoFacade;
     }
 
     private <T> Map<Path, String> validar(T form) {
@@ -54,13 +59,13 @@ public class EnderecoController {
             return ResponseEntity.badRequest().body(violacoesToMap);
         }
 
-        Endereco endereco = enderecoForm.toEndereco();
-        Integer resp = repositorioEnderecos.salvar(endereco);
+        EnderecoDto enderecoDto = enderecoForm.toEnderecoDto();
+        Long resp = enderecoFacade.salvar(enderecoDto);
         if ( resp == -1) {
             return ResponseEntity.badRequest().body("{\"Erro\": \"Endereco JÁ cadastrado.\"}");
         }
 
-        logger.info("POST - Sucesso : Cadastro Endereco: Rua: " + enderecoForm.getRua() + "Id: " + resp);
+        logger.info("POST - Sucesso : Cadastro Endereco: Rua: " + enderecoDto.getRua() + "Id: " + resp);
         return ResponseEntity.status(HttpStatus.CREATED).body("{\"Messagem\": \"Endereco CADASTRADO com sucesso.\", " +
                                                               "\"id\": \"" + resp +"\"}");
     }
@@ -72,7 +77,7 @@ public class EnderecoController {
         String json = "Erro Inesperado";
         try {
             ObjectMapper objectMapper = new ObjectMapper();
-            json = objectMapper.writeValueAsString(repositorioEnderecos.getAll());
+            json = objectMapper.writeValueAsString(enderecoFacade.getAll());
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
@@ -81,64 +86,65 @@ public class EnderecoController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Object> getEnderecoPorId(@PathVariable Integer id) {
+    public ResponseEntity<Object> getEnderecoPorId(@PathVariable Long id) {
         logger.info("GET - Pedido de Endereco por Id: " + id);
 
-        Optional<Endereco> endereco = repositorioEnderecos.buscarPorId(Integer.toString(id));
+        Optional<EnderecoDto> enderecoDto = enderecoFacade.buscarPorId(id);
 
-        boolean existeRegistro = endereco.isPresent();
+        boolean existeRegistro = enderecoDto.isPresent();
         if (!existeRegistro) {
             return ResponseEntity.badRequest().body("{\"Erro\": \"Endereco NÃO cadastrado.\"}");
         }
 
-        return ResponseEntity.status(HttpStatus.OK).body(endereco);
+        return ResponseEntity.status(HttpStatus.OK).body(enderecoDto);
     }
 
     //TODO: Melhor A a questão de busca por RUA. Ter só uma rua é estranho
     @GetMapping("/rua/{rua}")
     public ResponseEntity<Object> getEnderecoPorRua(@PathVariable String rua) {
-        Optional<Endereco> endereco = repositorioEnderecos.buscarPorRua(rua);
 
-        boolean existeRegistro = endereco.isPresent();
-        if (!existeRegistro) {
+        List<EnderecoDto> enderecoDto = enderecoFacade.buscarPorRua(rua);
+
+        if (enderecoDto.size() == 0) {
             return ResponseEntity.badRequest().body("{\"Erro\": \"Endereco NÃO cadastrado.\"}");
         }
 
-        return ResponseEntity.status(HttpStatus.OK).body(endereco);
+        return ResponseEntity.status(HttpStatus.OK).body(enderecoDto);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Object> deleteEnderecoPorId(@PathVariable Integer id) {
+    public ResponseEntity<Object> deleteEnderecoPorId(@PathVariable Long id) {
 
-        Optional<Endereco> endereco = repositorioEnderecos.buscarPorId(Integer.toString(id));
+        Optional<EnderecoDto> enderecoDto = enderecoFacade.buscarPorId(id);
 
-        boolean existeRegistro = endereco.isPresent();
+        boolean existeRegistro = enderecoDto.isPresent();
         if (!existeRegistro) {
-            return ResponseEntity.badRequest().body("{\"Erro\": \"Endereco NÃO cadastrado.\"}");
+            return ResponseEntity.badRequest().body("{\"Erro\": \"Endereço NÃO cadastrado.\"}");
         }
 
-        repositorioEnderecos.remove(endereco.get());
-        return ResponseEntity.ok("{\"Mensagem\": \"Endereco DELETADO com sucesso.\"}");
+        enderecoFacade.remove(id);
+        return ResponseEntity.ok("{\"Mensagem\": \"Endereço DELETADO com sucesso.\"}");
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Object> alteraEnderecoPorId(@PathVariable Integer id, @RequestBody EnderecoForm enderecoForm) {
+    public ResponseEntity<Object> alteraEnderecoPorId(@PathVariable Long id, @RequestBody EnderecoForm enderecoForm) {
         Map<Path, String> violacoesToMap = validar(enderecoForm);
 
         if (!violacoesToMap.isEmpty()) {
             return ResponseEntity.badRequest().body(violacoesToMap);
         }
 
-        Endereco enderecoNew = enderecoForm.toEndereco();
+        Optional<EnderecoDto> enderecoDto_old = enderecoFacade.buscarPorId(id);
 
-        Optional<Endereco> enderecoOld = repositorioEnderecos.buscarPorId(Integer.toString(id));
-        boolean existeRegistro = enderecoOld.isPresent();
+        boolean existeRegistro = enderecoDto_old.isPresent();
         if (!existeRegistro) {
             return ResponseEntity.badRequest().body("{\"Erro\": \"Endereco NÃO cadastrado.\"}");
         }
 
-        repositorioEnderecos.altera(enderecoOld.get(), enderecoNew);
-        return ResponseEntity.status(HttpStatus.OK).body(enderecoNew);
+        EnderecoDto enderecoDto = enderecoForm.toEnderecoDto();
+        enderecoDto.setId(id);
+        enderecoFacade.altera(enderecoDto);
+        return ResponseEntity.status(HttpStatus.OK).body(enderecoDto);
     }
 
 
