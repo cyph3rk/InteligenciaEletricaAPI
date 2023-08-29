@@ -1,6 +1,7 @@
 package com.InteligenciaEletricaAPI.controller.form;
 
 import com.InteligenciaEletricaAPI.dominio.Equipamento;
+import com.InteligenciaEletricaAPI.dto.EquipamentoDto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
@@ -22,7 +23,7 @@ public class EquipamentoForm {
     @NotBlank(message = "Campo POTENCIA é obrigatorio")
     private String potencia;
 
-    public Equipamento toEquipamento() {
-        return new Equipamento(nome, modelo, potencia);
+    public EquipamentoDto toEquipamentoDto() {
+        return new EquipamentoDto(nome, modelo, potencia);
     }
 }
